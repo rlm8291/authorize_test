@@ -8,10 +8,9 @@ from funcs import create_customer, find_customer, delete_customer, accept_host_p
 config = dotenv_values(".env")
 print(config)
 
-customer = create_customer()
-profileId = str(customer.customerProfileId)
-
-find_customer(profileId)
+profile = {
+    "id": ""
+}
 
 app = Flask(__name__)
 
@@ -19,19 +18,23 @@ app = Flask(__name__)
 def hello_payment():
     return "<p>Hellope!!!</p>"
 
-@app.route("/payment")
-def get_payment():
-    token = accept_host_page(profileId).token
-    return render_template("payment.html", token=token)
+@app.route("/create")
+def create():
+    customer = create_customer()
+    profile["id"] = str(customer.customerProfileId)
+    return "<p>CREATED</p>"
 
 @app.route("/find")
 def find():
-    find_customer(profileId)
+    find_customer(profile["id"])
     return "<p>FOUND</p>"
 
 @app.route("/delete")
 def delete():
-    print(profileId)
-    delete_customer(profileId)
+    delete_customer(profile["id"])
     return "<p>Deleted Customer</p>"
 
+@app.route("/payment")
+def get_payment():
+    token = accept_host_page(profile["id"]).token
+    return render_template("payment.html", token=str(token))

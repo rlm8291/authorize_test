@@ -88,11 +88,11 @@ def accept_host_page(profileId):
 
     payment_button_options = apicontractsv1.settingType()
     payment_button_options.settingName = apicontractsv1.settingNameEnum.hostedPaymentButtonOptions
-    payment_button_options.settingValue = '{"text": "Pay"}'
+    payment_button_options.settingValue = "{\"text\": \"Pay\"}"
 
     payment_order_options = apicontractsv1.settingType()
     payment_order_options.settingName = apicontractsv1.settingNameEnum.hostedPaymentOrderOptions
-    payment_order_options.settingValue = '{"cardCodeRequired": false, "showCreditCard": true, "showBankAccount": true}'
+    payment_order_options.settingValue = "{\"show\": false}"
 
     settings = apicontractsv1.ArrayOfSetting()
     settings.setting.append(payment_button_options)
@@ -105,7 +105,7 @@ def accept_host_page(profileId):
     payment_page_request = apicontractsv1.getHostedPaymentPageRequest()
     payment_page_request.merchantAuthentication = merchant_auth
     payment_page_request.transactionRequest = transaction_request
-    payment_page_request.hostedPaymentsSettings = settings
+    payment_page_request.hostedPaymentSettings = settings
 
     payment_page_controller = getHostedPaymentPageController(payment_page_request)
     payment_page_controller.execute()
