@@ -20,19 +20,19 @@ def hello_payment():
 def create():
     customer = create_customer()
     profile["id"] = str(customer.customerProfileId)
-    return "<p>CREATED</p>"
+    return render_template("create.html", profileId=profile["id"])
 
 
 @app.route("/find")
 def find():
-    find_customer(profile["id"])
-    return "<p>FOUND</p>"
+    customer = find_customer(profile["id"])
+    return render_template("find.html", customer=customer)
 
 
 @app.route("/delete")
 def delete():
     delete_customer(profile["id"])
-    return "<p>Deleted Customer</p>"
+    return render_template("delete.html")
 
 
 @app.route("/payment")
