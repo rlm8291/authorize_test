@@ -155,12 +155,12 @@ def accept_host_page(profileId):
     transaction_request = apicontractsv1.transactionRequestType()
     transaction_request.transactionType = "authCaptureTransaction"
     transaction_request.amount = Decimal(110)
+    transaction_request.order = "Witcher-Services-111"
     transaction_request.profile = profileId
 
     payment_page_request = apicontractsv1.getHostedPaymentPageRequest()
     payment_page_request.merchantAuthentication = merchant_auth
     payment_page_request.transactionRequest = transaction_request
-    payment_page_request.customerProfileId = profileId
     payment_page_request.hostedPaymentSettings = settings
 
     payment_page_controller = getHostedPaymentPageController(payment_page_request)
