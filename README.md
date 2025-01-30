@@ -1,6 +1,7 @@
 # Authorize.net Accept Hosted
 ---
 Setup application with a virtual environment for Python 3.12
+
 Install packages:
 * authorizenet
 * python-dotenv
