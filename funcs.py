@@ -130,7 +130,7 @@ def accept_host_page(profileId):
         apicontractsv1.settingNameEnum.hostedPaymentPaymentOptions
     )
     hosted_payment_options.settingValue = (
-        '{"showCreditCard": true, "showBankAccount":false}'
+        '{"showCreditCard": true, "showBankAccount":false, "cardCodeRequired": true}'
     )
 
     payment_customer_options = apicontractsv1.settingType()
@@ -144,6 +144,10 @@ def accept_host_page(profileId):
         apicontractsv1.settingNameEnum.hostedPaymentSecurityOptions
     )
     hosted_payment_security.settingValue = '{"captcha": true}'
+
+    payment_billing_options = apicontractsv1.settingType()
+    payment_billing_options.settingName = apicontractsv1.settingNameEnum.hostedPaymentBillingAddressOptions
+    payment_billing_options.settingValue = '{"show": true, "required": true}'
 
     settings = apicontractsv1.ArrayOfSetting()
     settings.setting.append(payment_button_options)
