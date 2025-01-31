@@ -1,3 +1,5 @@
+{% extends 'base.html' %}
+{% block content %}
 <div>
 	<p>Found the witchers profile</p>
 	<p>His CustomerProfileId is {{customer.profile.customerProfileId}}</p>
@@ -10,3 +12,4 @@
 		</ul>
 	{% endif %}
 </div>
+{% endblock %}

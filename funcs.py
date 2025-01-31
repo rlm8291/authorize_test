@@ -57,7 +57,7 @@ def find_customer(profileId):
         print(
             "Successfully retrieved the witchers profile. His profile id %s and customer id %s"
             % (
-                get_customer_profile.customerProfileId,
+                response.profile.customerProfileId,
                 response.profile.merchantCustomerId,
             )
         )

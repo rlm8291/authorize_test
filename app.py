@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello_payment():
-    return "<p>Hellope!!!</p>"
+    return render_template("hellope.html")
 
 
 @app.route("/create")
