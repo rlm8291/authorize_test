@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello_payment():
-    return render_template("main.html")
+    return render_template("main.html", response="Push any of the buttons to test a route")
 
 
 @app.route("/create")
