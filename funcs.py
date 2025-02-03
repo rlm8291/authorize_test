@@ -1,4 +1,5 @@
 import random
+from lxml import etree as et
 from dotenv import dotenv_values
 from authorizenet import apicontractsv1
 from authorizenet.apicontrollers import (
@@ -11,6 +12,19 @@ from authorizenet.apicontrollers import (
 from decimal import Decimal
 
 config = dotenv_values(".env")
+
+def read_response(xml_string):
+    return et.tostring(xml_string, pretty_print=True).decode()
+
+
+def response_builder(response, message):
+    xml_string = et.tostring(response, pretty_print=True).decode()
+    return {
+        "result": response.messages.resultCode,
+        "code": response.messages.message.code,
+        "xml_string": xml_string,
+        "message": message
+    }    
 
 
 def create_customer():
@@ -31,12 +45,10 @@ def create_customer():
 
     response = controller.getresponse()
 
-    if response.messages.resultCode == "Ok":
-        print("Success! Geralt of Rivias ID is: %s" % response.customerProfileId)
-    else:
-        print("Failed to make the witchers profile!!")
+    if response.messages.resultCode != "Ok":
+        return response_builder(response, "Failed to make the witchers profile!!") 
 
-    return response
+    return response_builder(response, str("Success! Geralt of Rivias ID is: %s" % response.customerProfileId))
 
 
 def find_customer(profileId):

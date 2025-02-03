@@ -17,22 +17,24 @@
 	<title>Accept Hosted - Samples</title>
     </head>
     <body>
-	<main class="container-fluid py-3">
-	    <section class="row">
-		<div class="col"></div>
-		<div class="col-lg-10">
-		    {% include 'hellope.html' %}
-		    <div class='row my-3'>
-				<div class='col-3'>
-			    	{% include 'actions.html' %}
+		<main class="container-fluid py-3">
+			<section class="row">
+				<div class="col"></div>
+				
+				<div class="col-lg-10">
+					{% include 'hellope.html' %}
+					<div class='row'>
+						<div class='col-3'>
+							{% include 'actions.html' %}
+						</div>
+						<div class='col'>
+							{% include 'response.html' %}
+						</div>
+					</div>
 				</div>
-				<div class='col'>
-			    	{% include 'response.html' %}
-				</div>
-		    </div>
-		</div>
-		<div class="col"></div>
-	    </section>
-	</main>
+
+				<div class="col"></div>
+			</section>
+		</main>
     </body>
 </html>

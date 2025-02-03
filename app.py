@@ -1,6 +1,6 @@
+import json
 from flask import Flask, render_template
 from dotenv import dotenv_values
-
 from funcs import create_customer, find_customer, delete_customer, accept_host_page
 
 config = dotenv_values(".env")
@@ -10,10 +10,10 @@ profile = {"id": ""}
 
 app = Flask(__name__)
 
-
 @app.route("/")
 def hello_payment():
-    return render_template("main.html", response="Push any of the buttons to test a route")
+    new_customer = create_customer()
+    return render_template("main.html", response=new_customer)
 
 
 @app.route("/create")
