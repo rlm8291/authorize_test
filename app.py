@@ -13,14 +13,14 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello_payment():
-    return render_template("hellope.html")
+    return render_template("main.html")
 
 
 @app.route("/create")
 def create():
     customer = create_customer()
     profile["id"] = str(customer.customerProfileId)
-    return render_template("create.html", profileId=profile["id"])
+    return render_template("main.html", profileId=profile["id"])
 
 
 @app.route("/find")
