@@ -39,3 +39,8 @@ def delete():
 def get_payment():
     token = accept_host_page(profile["id"]).token
     return render_template("payment.html", token=str(token))
+
+
+@app.route("/test", methods=["POST"])
+def test():
+    return render_template("response.html", response="Hello HTMX!!!!")

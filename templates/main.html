@@ -12,11 +12,7 @@
 	crossorigin="anonymous">
 	</script>
 
-	<script
-	src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
-	integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8="
-	crossorigin="anonymous">
-	</script>
+	<script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
 
 	<title>Accept Hosted - Samples</title>
     </head>
@@ -26,13 +22,13 @@
 		<div class="col"></div>
 		<div class="col-lg-10">
 		    {% include 'hellope.html' %}
-		    <div class='row'>
-			<div class='col-3'>
-			    {% include 'actions.html' %}
-			</div>
-			<div class='col'>
-			    {% include 'response.html' %}
-			</div>
+		    <div class='row my-3'>
+				<div class='col-3'>
+			    	{% include 'actions.html' %}
+				</div>
+				<div class='col'>
+			    	{% include 'response.html' %}
+				</div>
 		    </div>
 		</div>
 		<div class="col"></div>

@@ -1,7 +1,7 @@
 <h4>Profile</h4>
 <hr>
 <div class='d-grid gap-2 mb-3'>
-    <button class="btn btn-primary">Get Profile</button>
+    <button class="btn btn-primary" hx-post="/test" hx-target="#response_text" hx-swap="outerHTML">Get Profile</button>
     <button class="btn btn-primary">Reset Profile</button>
     <button class="btn btn-primary">Set Payment Profile</button>
     <button class="btn btn-primary">Remove Payment Profile</button>
