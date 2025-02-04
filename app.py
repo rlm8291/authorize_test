@@ -1,12 +1,9 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template
 from dotenv import dotenv_values
 from funcs import create_customer, find_customer, delete_customer, accept_host_page
 
 config = dotenv_values(".env")
-print(config)
-
 profile = {"id": ""}
-
 app = Flask(__name__)
 
 
@@ -38,9 +35,8 @@ def delete():
 @app.route("/payment_token", methods=["POST"])
 def get_payment():
     response_token = accept_host_page(profile["id"])
-    return render_template("response.html", response=response_token)
-
-
-@app.route("/test", methods=["POST"])
-def test():
-    return render_template("response.html", response="Hello HTMX!!!!")
+    return render_template(
+        "response.html",
+        response=response_token["response"],
+        token=response_token["token"],
+    )

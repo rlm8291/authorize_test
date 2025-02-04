@@ -186,11 +186,17 @@ def accept_host_page(profileId):
     response = payment_page_controller.getresponse()
 
     if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
-        return response_builder(
-            response, "Failed to generate a payment page to collect your gold!"
-        )
+        return {
+            "token": "",
+            "response": response_builder(
+                response, "Failed to generate a pyament page to collect your gold!"
+            ),
+        }
 
-    return response_builder(
-        response,
-        "Successfully setup a payment page to earn your gold from the witcher!",
-    )
+    return {
+        "token": response.token,
+        "response": response_builder(
+            response,
+            "Successfully setup a payment page to earn your gold from the witcher!!!",
+        ),
+    }
