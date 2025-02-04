@@ -3,9 +3,10 @@
 <div class='d-grid gap-2 mb-3'>
     <button class="btn btn-primary" hx-get="/find" hx-target="#response_message" hx-swap="outerHTML">Get Profile</button>
     <button class="btn btn-primary">Reset Profile</button>
-    <button class="btn btn-primary">Set Payment Profile</button>
+    <button class="btn btn-primary" hx-delete="/delete" hx-target="#response_message">Delete Customer Profile</button>
+    <!-- <button class="btn btn-primary">Set Payment Profile</button>
     <button class="btn btn-primary">Remove Payment Profile</button>
-    <button class="btn btn-primary">Set Subscription</button>
+    <button class="btn btn-primary">Set Subscription</button> -->
 </div>
 <h4>Accept Hosted</h4>
 <hr>

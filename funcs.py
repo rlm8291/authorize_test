@@ -104,12 +104,14 @@ def delete_customer(profileId):
 
     response = controller.getresponse()
 
-    if response.messages.resultCode == "Ok":
-        print("Successfully killed the witcher luring him into a nest of wyverns!!!")
-    else:
-        print("Failed to kill the witcher with a trap!!!")
+    if response.messages.resultCode != "Ok":
+        return response_builder(
+            response, "Failed to kill the witcher with your wyvern trap!!!"
+        )
 
-    return response
+    return response_builder(
+        response, "Successfully villed the witcher luring him into a nest of wyverns!!!"
+    )
 
 
 def accept_host_page(profileId):

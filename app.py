@@ -24,10 +24,10 @@ def find():
     return render_template("response.html", response=customer)
 
 
-@app.route("/delete")
+@app.route("/delete", methods=["DELETE"])
 def delete():
-    delete_customer(profile["id"])
-    return render_template("delete.html")
+    deleted_customer = delete_customer(profile["id"])
+    return render_template("response.html", response=deleted_customer)
 
 
 @app.route("/payment")
