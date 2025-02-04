@@ -1,4 +1,3 @@
-import json
 from flask import Flask, render_template
 from dotenv import dotenv_values
 from funcs import create_customer, find_customer, delete_customer, accept_host_page

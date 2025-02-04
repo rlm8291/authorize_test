@@ -43,7 +43,12 @@ def create_customer():
     response = controller.getresponse()
 
     if response.messages.resultCode != "Ok":
-        return response_builder(response, "Failed to make the witchers profile!!")
+        return {
+            "profileId": "",
+            "response": response_builder(
+                response, "Failed to make the witchers profile!!"
+            ),
+        }
 
     return {
         "profileId": str(response.customerProfileId),
