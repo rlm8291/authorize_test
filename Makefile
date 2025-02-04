@@ -1,3 +1,5 @@
+install_deps:
+	pip install -r requirements.txt
 run:
 	python app.py
 flask:

@@ -2,7 +2,7 @@
 ---
 Setup application with a virtual environment for Python 3.12
 
-Install packages:
+Install packages (requirements.txt added):
 * authorizenet
 * python-dotenv
 * flask 
