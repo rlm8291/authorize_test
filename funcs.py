@@ -13,9 +13,6 @@ from decimal import Decimal
 
 config = dotenv_values(".env")
 
-def read_response(xml_string):
-    return et.tostring(xml_string, pretty_print=True).decode()
-
 
 def response_builder(response, message):
     xml_string = et.tostring(response, pretty_print=True).decode()
@@ -23,8 +20,8 @@ def response_builder(response, message):
         "result": response.messages.resultCode,
         "code": response.messages.message.code,
         "xml_string": xml_string,
-        "message": message
-    }    
+        "message": message,
+    }
 
 
 def create_customer():
@@ -46,9 +43,15 @@ def create_customer():
     response = controller.getresponse()
 
     if response.messages.resultCode != "Ok":
-        return response_builder(response, "Failed to make the witchers profile!!") 
+        return response_builder(response, "Failed to make the witchers profile!!")
 
-    return response_builder(response, str("Success! Geralt of Rivias ID is: %s" % response.customerProfileId))
+    return {
+        "profileId": str(response.customerProfileId),
+        "response": response_builder(
+            response,
+            str("Success! Geralt of Rivias ID is: %s" % response.customerProfileId),
+        ),
+    }
 
 
 def find_customer(profileId):
@@ -64,38 +67,27 @@ def find_customer(profileId):
     controller.execute()
 
     response = controller.getresponse()
+    message = ""
 
-    if response.messages.resultCode == "Ok":
-        print(
-            "Successfully retrieved the witchers profile. His profile id %s and customer id %s"
-            % (
-                response.profile.customerProfileId,
-                response.profile.merchantCustomerId,
-            )
-        )
-        if hasattr(response, "profile"):
-            if hasattr(response.profile, "paymentProfiles"):
-                for paymentProfile in response.profile.paymentProfiles:
-                    print(
-                        "paymentProfile in get_customerprofile is: %s" % paymentProfile
-                    )
-                    print(
-                        "Payment Profile ID %s"
-                        % str(paymentProfile.customerPaymentProfileId)
-                    )
-        if hasattr(response, "subscriptionIds"):
-            if hasattr(response.subscriptionIds, "subscriptionId"):
-                print("list of subscriptionid:")
-                for subscriptionid in response.subscriptionIds.subscriptionId:
-                    print(subscriptionid)
-    else:
-        print("response code: %s" % response.messages.resultCode)
-        print(
-            "Failed to get customer profile information with id %s"
-            % get_customer_profile.customerProfileId
-        )
+    if response.messages.resultCode != "Ok":
+        message = "Failed to get the witchers profile!!!"
+        return response_builder(response, message)
 
-    return response
+    message += str(
+        "Successfully retrieved the witchers profile. His profile id %s and customer id %s"
+        % (
+            response.profile.customerProfileId,
+            response.profile.merchantCustomerId,
+        )
+    )
+    if hasattr(response.profile, "paqymentProfiles"):
+        message += (
+            " (Payment Profiles: " + str(len(response.profile.paymentProfiles)) + ")"
+        )
+    if hasattr(response, "subscriptionIds"):
+        message += " (Subscriptions: " + str(len(response.subscriptionIds)) + ")"
+
+    return response_builder(response, message)
 
 
 def delete_customer(profileId):
@@ -158,7 +150,9 @@ def accept_host_page(profileId):
     hosted_payment_security.settingValue = '{"captcha": true}'
 
     payment_billing_options = apicontractsv1.settingType()
-    payment_billing_options.settingName = apicontractsv1.settingNameEnum.hostedPaymentBillingAddressOptions
+    payment_billing_options.settingName = (
+        apicontractsv1.settingNameEnum.hostedPaymentBillingAddressOptions
+    )
     payment_billing_options.settingValue = '{"show": true, "required": true}'
 
     settings = apicontractsv1.ArrayOfSetting()

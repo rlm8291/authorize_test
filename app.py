@@ -10,23 +10,18 @@ profile = {"id": ""}
 
 app = Flask(__name__)
 
+
 @app.route("/")
 def hello_payment():
     new_customer = create_customer()
-    return render_template("main.html", response=new_customer)
-
-
-@app.route("/create")
-def create():
-    customer = create_customer()
-    profile["id"] = str(customer.customerProfileId)
-    return render_template("main.html", profileId=profile["id"])
+    profile["id"] = new_customer["profileId"]
+    return render_template("main.html", response=new_customer["response"])
 
 
 @app.route("/find")
 def find():
     customer = find_customer(profile["id"])
-    return render_template("find.html", customer=customer)
+    return render_template("response.html", response=customer)
 
 
 @app.route("/delete")
