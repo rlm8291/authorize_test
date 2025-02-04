@@ -42,7 +42,7 @@ def create_customer():
 
     response = controller.getresponse()
 
-    if response.messages.resultCode != "Ok":
+    if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
         return {
             "profileId": "",
             "response": response_builder(
@@ -74,7 +74,7 @@ def find_customer(profileId):
     response = controller.getresponse()
     message = ""
 
-    if response.messages.resultCode != "Ok":
+    if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
         message = "Failed to get the witchers profile!!!"
         return response_builder(response, message)
 
@@ -109,7 +109,7 @@ def delete_customer(profileId):
 
     response = controller.getresponse()
 
-    if response.messages.resultCode != "Ok":
+    if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
         return response_builder(
             response, "Failed to kill the witcher with your wyvern trap!!!"
         )
@@ -185,11 +185,12 @@ def accept_host_page(profileId):
 
     response = payment_page_controller.getresponse()
 
-    if response.messages.resultCode == apicontractsv1.messageTypeEnum.Ok:
-        print("Successfully paying the witcher his gold!")
-        print("Token : %s" % response.token)
-    if response.messages is not None:
-        print("Message Code : %s" % response.messages.message[0]["code"].text)
-        print("Message Text : %s" % response.messages.message[0]["text"].text)
+    if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
+        return response_builder(
+            response, "Failed to generate a payment page to collect your gold!"
+        )
 
-    return response
+    return response_builder(
+        response,
+        "Successfully setup a payment page to earn your gold from the witcher!",
+    )

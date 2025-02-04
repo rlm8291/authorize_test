@@ -1,16 +1,16 @@
 <h4>Profile</h4>
 <hr>
 <div class='d-grid gap-2 mb-3'>
-    <button class="btn btn-primary" hx-get="/find" hx-target="#response_message" hx-swap="outerHTML">Get Profile</button>
+    <button class="btn btn-primary" hx-get="/find" hx-target="#response_message" hx-swap="outerHTML">Get/Create Profile</button>
     <button class="btn btn-primary">Reset Profile</button>
     <button class="btn btn-primary" hx-delete="/delete" hx-target="#response_message">Delete Customer Profile</button>
-    <!-- <button class="btn btn-primary">Set Payment Profile</button>
-    <button class="btn btn-primary">Remove Payment Profile</button>
-    <button class="btn btn-primary">Set Subscription</button> -->
+    <button class="btn btn-primary" disabled>Set Payment Profile</button>
+    <button class="btn btn-primary" disabled>Remove Payment Profile</button>
+    <button class="btn btn-primary" disabled>Set Subscription</button>
 </div>
 <h4>Accept Hosted</h4>
 <hr>
 <div class='d-grid gap-2'>
-    <button class="btn btn-success">Get Payment Token</button>
-    <button class="btn btn-success">Get Embedded Payment Form</button>
+    <button class="btn btn-success" hx-post='/payment_token' hx-target="#response_message" hx-swap="outerHTML">Get Payment Token</button>
+    <button class="btn btn-success" disabled>Get Embedded Payment Form</button>
 </div>
