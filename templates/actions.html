@@ -12,5 +12,5 @@
 <hr>
 <div class='d-grid gap-2'>
     <button class="btn btn-success" hx-post='/payment_token' hx-target="#response_message" hx-swap="outerHTML">Get Payment Token</button>
-    <button class="btn btn-success" disabled>Get Embedded Payment Form</button>
+    <button class="btn btn-success" hx-post='/payment_page' hx-include='#token' hx-target='#response_message' hx-swap="outerHTML">Get Embedded Payment Form</button>
 </div>

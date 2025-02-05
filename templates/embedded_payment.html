@@ -1,0 +1,9 @@
+<div id="response_message" class="container-fluid h-100">
+    <form name="send_token" id="send_token" action="https://test.authorize.net/payment/payment" method="post" target="add_payment">
+        <input type="hidden" name="token" value={{ token }} />
+    </form>
+    <iframe id="add_payment" name="add_payment" frameborder="0" scrolling="no" height="850px" width="100%"></iframe>
+    <script>
+        document.forms["send_token"].submit();
+    </script>
+</div>

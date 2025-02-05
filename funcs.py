@@ -85,7 +85,7 @@ def find_customer(profileId):
             response.profile.merchantCustomerId,
         )
     )
-    if hasattr(response.profile, "paqymentProfiles"):
+    if hasattr(response.profile, "paymentProfiles"):
         message += (
             " (Payment Profiles: " + str(len(response.profile.paymentProfiles)) + ")"
         )
@@ -115,7 +115,7 @@ def delete_customer(profileId):
         )
 
     return response_builder(
-        response, "Successfully villed the witcher luring him into a nest of wyverns!!!"
+        response, "Successfully killed the witcher luring him into a nest of wyverns!!!"
     )
 
 
@@ -162,12 +162,21 @@ def accept_host_page(profileId):
     )
     payment_billing_options.settingValue = '{"show": true, "required": true}'
 
+    iframe_communicator = apicontractsv1.settingType()
+    iframe_communicator.settingName = (
+        apicontractsv1.settingNameEnum.hostedPaymentIFrameCommunicatorUrl
+    )
+    iframe_communicator.settingValue = (
+        '{"url": "https://127.0.0.1:5000//static/communicator.html"}'
+    )
+
     settings = apicontractsv1.ArrayOfSetting()
     settings.setting.append(payment_button_options)
     settings.setting.append(payment_order_options)
     settings.setting.append(payment_customer_options)
     settings.setting.append(hosted_payment_options)
     settings.setting.append(hosted_payment_security)
+    settings.setting.append(iframe_communicator)
 
     transaction_request = apicontractsv1.transactionRequestType()
     transaction_request.transactionType = "authCaptureTransaction"

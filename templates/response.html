@@ -7,6 +7,7 @@
   <hr>
   <textarea class="form-control" placeholder="Leave a comment here" style="height: 100%">{{ response["xml_string"] }}</textarea>
   {% if token is defined %}
-    <input type="hidden" id="redirectToken" name="token" value={{ token }} />
+    <input type="hidden" id="token" name="token" value={{ token }} />
+    <iframe id="embed_here"></iframe>
   {% endif %}
 </div>

@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from dotenv import dotenv_values
 from funcs import create_customer, find_customer, delete_customer, accept_host_page
 
@@ -40,3 +40,8 @@ def get_payment():
         response=response_token["response"],
         token=response_token["token"],
     )
+
+
+@app.route("/payment_page", methods=["POST"])
+def send_payment():
+    return render_template("embedded_payment.html", token=request.values["token"])
