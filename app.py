@@ -45,3 +45,11 @@ def get_payment():
 @app.route("/payment_page", methods=["POST"])
 def send_payment():
     return render_template("embedded_payment.html", token=request.values["token"])
+
+
+@app.route("/receipt", methods=["POST"])
+def send_receipt(): 
+    details = request.values["iframe_response"]
+    print(dir(request.values["iframe_response"]))
+    return render_template("receipt.html", content=details)
+

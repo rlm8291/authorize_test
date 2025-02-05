@@ -23,7 +23,6 @@ def response_builder(response, message):
         "message": message,
     }
 
-
 def create_customer():
     merchant_auth = apicontractsv1.merchantAuthenticationType()
     merchant_auth.name = config["AUTHORIZE_LOGIN"]
@@ -124,11 +123,15 @@ def accept_host_page(profileId):
     merchant_auth.name = config["AUTHORIZE_LOGIN"]
     merchant_auth.transactionKey = config["AUTHORIZE_KEY"]
 
+    payment_return_options = apicontractsv1.settingType()
+    payment_return_options.settingName = apicontractsv1.settingNameEnum.hostedPaymentReturnOptions
+    payment_return_options.settingValue = '{"showReceipt": false}'
+
     payment_button_options = apicontractsv1.settingType()
     payment_button_options.settingName = (
         apicontractsv1.settingNameEnum.hostedPaymentButtonOptions
     )
-    payment_button_options.settingValue = '{"text": "Pay"}'
+    payment_button_options.settingValue = '{"text": "Pay Now"}'
 
     payment_order_options = apicontractsv1.settingType()
     payment_order_options.settingName = (
@@ -167,10 +170,11 @@ def accept_host_page(profileId):
         apicontractsv1.settingNameEnum.hostedPaymentIFrameCommunicatorUrl
     )
     iframe_communicator.settingValue = (
-        '{"url": "https://127.0.0.1:5000//static/communicator.html"}'
+        '{"url": "https://127.0.0.1:5000/static/communicator.html"}'
     )
 
     settings = apicontractsv1.ArrayOfSetting()
+    settings.setting.append(payment_return_options)
     settings.setting.append(payment_button_options)
     settings.setting.append(payment_order_options)
     settings.setting.append(payment_customer_options)
