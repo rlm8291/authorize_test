@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+from json import loads, dumps
 from dotenv import dotenv_values
 from funcs import create_customer, find_customer, delete_customer, accept_host_page
 
@@ -48,8 +49,9 @@ def send_payment():
 
 
 @app.route("/receipt", methods=["POST"])
-def send_receipt(): 
+def send_receipt():
     details = request.values["iframe_response"]
-    print(dir(request.values["iframe_response"]))
-    return render_template("receipt.html", content=details)
+    parsed = loads(details)
+    formatted = dumps(parsed, indent=2)
 
+    return render_template("receipt.html", content=formatted)
