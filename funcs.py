@@ -23,7 +23,8 @@ def response_builder(response, message):
         "message": message,
     }
 
-def create_customer():
+
+def create_customer(action=""):
     merchant_auth = apicontractsv1.merchantAuthenticationType()
     merchant_auth.name = config["AUTHORIZE_LOGIN"]
     merchant_auth.transactionKey = config["AUTHORIZE_KEY"]
@@ -40,6 +41,9 @@ def create_customer():
     controller.execute()
 
     response = controller.getresponse()
+    response_message = str(
+        "Success! Geralt of Rivias ID is: %s" % response.customerProfileId
+    )
 
     if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
         return {
@@ -49,12 +53,15 @@ def create_customer():
             ),
         }
 
+    if action == "Delete":
+        response_message = str(
+            "Success! You've killed + revived the witcher! His new ID is: %s"
+            % response.customerProfileId
+        )
+
     return {
         "profileId": str(response.customerProfileId),
-        "response": response_builder(
-            response,
-            str("Success! Geralt of Rivias ID is: %s" % response.customerProfileId),
-        ),
+        "response": response_builder(response, response_message),
     }
 
 
@@ -124,7 +131,9 @@ def accept_host_page(profileId):
     merchant_auth.transactionKey = config["AUTHORIZE_KEY"]
 
     payment_return_options = apicontractsv1.settingType()
-    payment_return_options.settingName = apicontractsv1.settingNameEnum.hostedPaymentReturnOptions
+    payment_return_options.settingName = (
+        apicontractsv1.settingNameEnum.hostedPaymentReturnOptions
+    )
     payment_return_options.settingValue = '{"showReceipt": false}'
 
     payment_button_options = apicontractsv1.settingType()

@@ -16,7 +16,7 @@ def hello_payment():
 
 
 @app.route("/find", methods=["GET"])
-def find():
+def search_customer():
     if bool(profile["id"]) is not True:
         new_customer = create_customer()
         profile["id"] = new_customer["profileId"]
@@ -26,11 +26,17 @@ def find():
     return render_template("response.html", response=customer)
 
 
-@app.route("/delete", methods=["DELETE"])
-def delete():
+@app.route("/reset", methods=["DELETE"])
+def reset_customer():
     deleted_customer = delete_customer(profile["id"])
-    profile["id"] = ""
-    return render_template("response.html", response=deleted_customer)
+
+    if deleted_customer["result"] != "Ok":
+        return render_template("response.html", response=deleted_customer)
+
+    new_customer = create_customer("Delete")
+    profile["id"] = new_customer["profileId"]
+
+    return render_template("response.html", response=new_customer["response"])
 
 
 @app.route("/payment_token", methods=["POST"])
