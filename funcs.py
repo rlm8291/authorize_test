@@ -7,6 +7,7 @@ from authorizenet.apicontrollers import (
     getCustomerProfileController,
     deleteCustomerProfileController,
     getHostedPaymentPageController,
+    ARBGetSubscriptionListController,
 )
 
 from decimal import Decimal
@@ -99,6 +100,44 @@ def find_customer(profileId):
         message += " (Subscriptions: " + str(len(response.subscriptionIds)) + ")"
 
     return response_builder(response, message)
+
+
+def get_customer_subscriptions():
+    merchant_auth = apicontractsv1.merchantAuthenticationType()
+    merchant_auth.name = config["AUTHORIZE_LOGIN"]
+    merchant_auth.transactionKey = config["AUTHORIZE_KEY"]
+
+    sorting = apicontractsv1.ARBGetSubscriptionListSorting()
+    sorting.orderBy = apicontractsv1.ARBGetSubscriptionListOrderFieldEnum.id
+    sorting.orderDescending = True
+
+    paging = apicontractsv1.Paging()
+    paging.limit = 20
+    paging.offset = 1
+
+    subscription_list_request = apicontractsv1.ARBGetSubscriptionListRequest()
+    subscription_list_request.merchantAuthentication = merchant_auth
+    subscription_list_request.searchType = (
+        apicontractsv1.ARBGetSubscriptionListSearchTypeEnum.subscriptionActive
+    )
+    subscription_list_request.sorting = sorting
+    subscription_list_request.paging = paging
+
+    subscription_list_controller = ARBGetSubscriptionListController(
+        subscription_list_request
+    )
+    subscription_list_controller.execute()
+
+    response = subscription_list_controller.getresponse()
+
+    if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
+        return response_builder(
+            response, "Failed to retrieve the witchers list of subscriptions!!!"
+        )
+
+    return response_builder(
+        response, "Successfully retrieved the witchers list of subscriptions!!!"
+    )
 
 
 def delete_customer(profileId):

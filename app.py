@@ -1,7 +1,13 @@
 from flask import Flask, render_template, request
 from json import loads, dumps
 from dotenv import dotenv_values
-from funcs import create_customer, find_customer, delete_customer, accept_host_page
+from funcs import (
+    create_customer,
+    find_customer,
+    get_customer_subscriptions,
+    delete_customer,
+    accept_host_page,
+)
 
 config = dotenv_values(".env")
 profile = {"id": ""}
@@ -24,6 +30,12 @@ def search_customer():
 
     customer = find_customer(profile["id"])
     return render_template("response.html", response=customer)
+
+
+@app.route("/get_subscriptions", methods=["GET"])
+def get_subscriptions():
+    subscriptions = get_customer_subscriptions()
+    return render_template("response.html", response=subscriptions)
 
 
 @app.route("/reset", methods=["DELETE"])
