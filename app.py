@@ -23,11 +23,6 @@ def hello_payment():
 
 @app.route("/find", methods=["GET"])
 def search_customer():
-    if bool(profile["id"]) is not True:
-        new_customer = create_customer()
-        profile["id"] = new_customer["profileId"]
-        return render_template("response.html", response=new_customer["response"])
-
     customer = find_customer(profile["id"])
     return render_template("response.html", response=customer)
 
@@ -63,7 +58,8 @@ def get_payment():
 
 @app.route("/payment_page", methods=["POST"])
 def send_payment():
-    return render_template("embedded_payment.html", token=request.values["token"])
+    response_token = accept_host_page(profile["id"])
+    return render_template("embedded_payment.html", token=response_token["token"])
 
 
 @app.route("/receipt", methods=["POST"])

@@ -1,7 +1,7 @@
 <h4>Profile</h4>
 <hr>
 <div class='d-grid gap-2 mb-3'>
-    <button class="btn btn-primary" hx-get="/find" hx-target="#response_message">Get/Create Profile</button>
+    <button class="btn btn-primary" hx-get="/find" hx-target="#response_message">Get Customer Profile</button>
     <button class="btn btn-primary" hx-delete="/reset" hx-target="#response_message">Reset Customer Profile</button>
     <button class="btn btn-primary" hx-get="/get_subscriptions" hx-target="#response_message">Get Subscription</button>
 </div>
@@ -9,5 +9,5 @@
 <hr>
 <div class='d-grid gap-2'>
     <button class="btn btn-success" hx-post='/payment_token' hx-target="#response_message">Get Payment Token</button>
-    <button class="btn btn-success" hx-post='/payment_page' hx-include='#token' hx-target='#response_message' hx-swap="outerHTML">Get Embedded Payment Form</button>
+    <button class="btn btn-success" hx-post='/payment_page' hx-target='#response_message' hx-swap="outerHTML">Get Embedded Payment Form</button>
 </div>
