@@ -217,7 +217,7 @@ def delete_customer(profileId):
     return response_builder(response, "Successfully deleted Test Tester's profile!")
 
 
-def accept_host_page(profileId):
+def accept_host_page(profileId, iframe_url):
     merchant_auth = apicontractsv1.merchantAuthenticationType()
     merchant_auth.name = config["AUTHORIZE_LOGIN"]
     merchant_auth.transactionKey = config["AUTHORIZE_KEY"]
@@ -270,9 +270,9 @@ def accept_host_page(profileId):
     iframe_communicator.settingName = (
         apicontractsv1.settingNameEnum.hostedPaymentIFrameCommunicatorUrl
     )
-    iframe_communicator.settingValue = (
-        '{"url": "https://127.0.0.1:5000/static/communicator.html"}'
-    )
+    iframe_communicator.settingValue = str('{"url": "%s"}' % iframe_url)
+
+    print(iframe_communicator.settingValue)
 
     settings = apicontractsv1.ArrayOfSetting()
     settings.setting.append(payment_return_options)

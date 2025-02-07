@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for
 from json import loads, dumps
 from dotenv import dotenv_values
 from funcs import (
@@ -72,7 +72,8 @@ def get_payment():
 
 @app.route("/payment_page", methods=["POST"])
 def send_payment():
-    response_token = accept_host_page(profile["id"])
+    iframe_url = url_for("static", filename="communicator.html", _external=True)
+    response_token = accept_host_page(profile["id"], iframe_url)
     return render_template("embedded_payment.html", token=response_token["token"])
 
 
