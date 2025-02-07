@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, url_for
+from flask import Flask, render_template, request, url_for, jsonify
 from json import loads, dumps
 from dotenv import dotenv_values
+from api_funcs import create_api_customer, api_accept_host_page
 from funcs import (
     create_customer,
     find_customer,
@@ -12,7 +13,7 @@ from funcs import (
 )
 
 config = dotenv_values(".env")
-profile = {"id": ""}
+profile = {"id": "", "api_profile": "", "api_token": ""}
 app = Flask(__name__)
 
 
@@ -62,7 +63,8 @@ def reset_customer():
 
 @app.route("/payment_token", methods=["POST"])
 def get_payment():
-    response_token = accept_host_page(profile["id"])
+    iframe_url = url_for("static", filename="communicator.html", _external=True)
+    response_token = accept_host_page(profile["id"], iframe_url)
     return render_template(
         "response.html",
         response=response_token["response"],
@@ -89,3 +91,35 @@ def send_receipt():
     formatted = dumps(parsed, indent=2)
 
     return render_template("receipt.html", content=formatted)
+
+
+@app.route("/get_api_customer", methods=["GET"])
+def send_api_customer():
+    customer = find_customer(profile["api_profile"])
+    return render_template("response.html", response=customer)
+
+
+@app.route("/api_payment", methods=["POST"])
+def get_api_payment():
+    if profile["api_token"] == "":
+        return render_template("api_message.html")
+
+    return render_template("embedded_payment.html", token=profile["api_token"])
+
+
+@app.route("/dev_token", methods=["POST"])
+def dev_token():
+    payload = request.get_json()
+    customer = create_api_customer(
+        payload["firstName"], payload["lastName"], payload["email"]
+    )
+
+    profile["api_profile"] = customer
+
+    iframe_url = payload["iframeUrl"]
+    payment_token = api_accept_host_page(customer, iframe_url)
+    profile["api_token"] = payment_token
+
+    response = jsonify({"token": str(payment_token)})
+
+    return response
