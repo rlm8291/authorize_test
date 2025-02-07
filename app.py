@@ -5,6 +5,8 @@ from funcs import (
     create_customer,
     find_customer,
     get_customer_subscriptions,
+    get_unsettled_transaction_list,
+    get_customer_profile_transaction_list,
     delete_customer,
     accept_host_page,
 )
@@ -25,6 +27,18 @@ def hello_payment():
 def search_customer():
     customer = find_customer(profile["id"])
     return render_template("response.html", response=customer)
+
+
+@app.route("/get_unsettled_transactions", methods=["GET"])
+def unsettled_transactions():
+    unsettled_transactions = get_unsettled_transaction_list()
+    return render_template("response.html", response=unsettled_transactions)
+
+
+@app.route("/get_transactions", methods=["GET"])
+def get_transactions():
+    customer_transactions = get_customer_profile_transaction_list(profile["id"])
+    return render_template("response.html", response=customer_transactions)
 
 
 @app.route("/get_subscriptions", methods=["GET"])

@@ -5,6 +5,8 @@ from authorizenet import apicontractsv1
 from authorizenet.apicontrollers import (
     createCustomerProfileController,
     getCustomerProfileController,
+    getUnsettledTransactionListController,
+    getTransactionListForCustomerController,
     deleteCustomerProfileController,
     getHostedPaymentPageController,
     ARBGetSubscriptionListController,
@@ -100,6 +102,61 @@ def find_customer(profileId):
         message += " (Subscriptions: " + str(len(response.subscriptionIds)) + ")"
 
     return response_builder(response, message)
+
+
+def get_unsettled_transaction_list():
+    merchant_auth = apicontractsv1.merchantAuthenticationType()
+    merchant_auth.name = config["AUTHORIZE_LOGIN"]
+    merchant_auth.transactionKey = config["AUTHORIZE_KEY"]
+
+    sorting = apicontractsv1.TransactionListSorting()
+    sorting.orderBy = apicontractsv1.TransactionListOrderFieldEnum.id
+    sorting.orderDescending = True
+
+    paging = apicontractsv1.Paging()
+    paging.limit = 20
+    paging.offset = 1
+
+    unsettled_transactions_request = apicontractsv1.getUnsettledTransactionListRequest()
+    unsettled_transactions_request.merchantAuthentication = merchant_auth
+    unsettled_transactions_request.refId = "Sample"
+    unsettled_transactions_request.sorting = sorting
+    unsettled_transactions_request.paging = paging
+
+    unsettled_transaction_list = getUnsettledTransactionListController(
+        unsettled_transactions_request
+    )
+    unsettled_transaction_list.execute()
+
+    response = unsettled_transaction_list.getresponse()
+
+    return response_builder(response, "Retrieved all unsettled payments!")
+
+
+def get_customer_profile_transaction_list(profileId):
+    merchant_auth = apicontractsv1.merchantAuthenticationType()
+    merchant_auth.name = config["AUTHORIZE_LOGIN"]
+    merchant_auth.transactionKey = config["AUTHORIZE_KEY"]
+
+    transaction_customer_list = apicontractsv1.getTransactionListForCustomerRequest()
+    transaction_customer_list.merchantAuthentication = merchant_auth
+    transaction_customer_list.customerProfileId = profileId
+
+    transaction_customer_list = getTransactionListForCustomerController(
+        transaction_customer_list
+    )
+    transaction_customer_list.execute()
+
+    response = transaction_customer_list.getresponse()
+
+    if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
+        return response_builder(
+            response, "Failed to retrieve the witchers transactions!!!"
+        )
+
+    return response_builder(
+        response, "Rectrieved a list of the witchers transactions!!!"
+    )
 
 
 def get_customer_subscriptions():
