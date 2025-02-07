@@ -95,6 +95,9 @@ def send_receipt():
 
 @app.route("/get_api_customer", methods=["GET"])
 def send_api_customer():
+    if profile["api_profile"] == "":
+        return render_template("api_message.html")
+
     customer = find_customer(profile["api_profile"])
     return render_template("response.html", response=customer)
 
