@@ -5,11 +5,12 @@
     <button class="btn btn-primary" hx-put="/reset" hx-target="#response_message">Reset Customer Profile</button>
     <button class="btn btn-primary" hx-get="/get_unsettled_transactions" hx-target="#response_message">Get Unsettled Transactions</button>
     <button class="btn btn-primary" hx-get="/get_transactions" hx-target="#response_message">Get Transactions</button>
-    <button class="btn btn-primary" hx-get="/get_subscriptions" hx-target="#response_message">Get Subscriptions</button>
+    <button class="btn btn-primary" hx-get="/get_api_customer" hx-target="#response_message">Get API Customer</button>
 </div>
 <h4>Accept Hosted</h4>
 <hr>
 <div class='d-grid gap-2'>
     <button class="btn btn-success" hx-post='/payment_token' hx-target="#response_message">Get Payment Token</button>
     <button class="btn btn-success" hx-post='/payment_page' hx-target='#response_message' hx-swap="outerHTML">Get Embedded Payment Form</button>
+    <button class="btn btn-success" hx-post='/api_payment' hx-target='#response_message' hx-swap="outerHTML">Get Embedded API Form</button>
 </div>
