@@ -1,0 +1,44 @@
+<div id="response_message" class="container-fluid h-100">
+    <form name="send_token" id="send_token" action="https://test.authorize.net/payment/payment" method="post"
+        target="add_payment">
+        <input type="hidden" name="token" value={{ token }} />
+    </form>
+
+    <input name="iframe_response" type="hidden" id="iframe_response" value="" />
+    <button id="iframe_followup" hx-post="/receipt" hx-include="#iframe_response" hx-target="#response_message" hidden></button>
+    <button id="iframe_cancel" hx-get="/cancel" hx-target="#response_message" hidden></button>
+
+
+    <!-- height="850px" width="100%" -->
+    <iframe id="add_payment" class="embed-responsive-item" name="add_payment" width="100%" height="850px"></iframe>
+    <script>
+        document.forms["send_token"].submit();
+
+        window.CommunicationHandler = {};
+        CommunicationHandler.onReceiveCommunication = function (args) {
+            var params = parseQueryString(args.qstr);
+            switch (params["action"]) {
+                case "cancel":
+                    document.getElementById('iframe_cancel').click()
+                    break;
+                case "transactResponse":
+                    document.getElementById('iframe_response').value = params["response"]
+                    document.getElementById('iframe_followup').click()
+                    break;
+            }
+        };
+
+        function parseQueryString(str) {
+            console.log(str)
+            var vars = [];
+            var arr = str.split('&');
+            var pair;
+            for (var i = 0; i < arr.length; i++) {
+                pair = arr[i].split('=');
+                vars.push(pair[0]);
+                vars[pair[0]] = unescape(pair[1]);
+            }
+            return vars;
+        }
+    </script>
+</div>

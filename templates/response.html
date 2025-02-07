@@ -1,0 +1,9 @@
+<div class="container-fluid h-100" id="response_message">
+  {% if response["result"] != "Ok" %}
+    <h4>{{ response["message"] }} <span class="badge rounded-pill text-bg-danger">{{ response["result"] }} : {{ response["code"] }}</span></h4>
+  {% else %}
+    <h4>{{ response["message"] }} <span class="badge rounded-pill text-bg-success">{{ response["result"] }} : {{ response["code"] }}</span></h4>
+  {% endif %}
+  <hr>
+  <textarea class="form-control h-100" placeholder="Leave a comment here">{{ response["xml_string"] }}</textarea>
+</div>
