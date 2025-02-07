@@ -16,7 +16,7 @@ To setup the environment variables:
 
 Use flask_ssl to run an adhoc ssl instantce. Required for setting up the iframe communicator.
 
-Also for ease of use "make flask_ssl_watch"
+Also for ease of use "make flask_ssl" or "make flask_ssl_watch"
 
 Page is set to create a profile for interactions. Simple actions for creating a response and validating the transactions. Get Embedded Payment either retrieves the last created token or sets a new one for ease of use.
 
