@@ -35,9 +35,9 @@ def create_customer(action=""):
     create_customer_profile = apicontractsv1.createCustomerProfileRequest()
     create_customer_profile.merchantAuthentication = merchant_auth
     create_customer_profile.profile = apicontractsv1.customerProfileType(
-        "grivia" + str(random.randint(0, 10000)),
-        "Geralt of Rivia",
-        "geralt@kaermorhen.com",
+        "Test" + str(random.randint(0, 10000)),
+        "Tester",
+        "test@test.com",
     )
 
     controller = createCustomerProfileController(create_customer_profile)
@@ -48,17 +48,17 @@ def create_customer(action=""):
         return {
             "profileId": "",
             "response": response_builder(
-                response, "Failed to make the witchers profile!!"
+                response, "Failed to make Test Tester's profile!"
             ),
         }
 
     response_message = str(
-        "Success! Geralt of Rivias ID is: %s" % response.customerProfileId
+        "Success! Test Tester's ID is: %s" % response.customerProfileId
     )
 
     if action == "Delete":
         response_message = str(
-            "Success! You've killed + revived the witcher! His new ID is: %s"
+            "Success! You've reset Test Tester's profile! Their new ID is: %s"
             % response.customerProfileId
         )
 
@@ -84,11 +84,11 @@ def find_customer(profileId):
     message = ""
 
     if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
-        message = "Failed to get the witchers profile!!!"
+        message = "Failed to get Test Tester's profile!"
         return response_builder(response, message)
 
     message += str(
-        "Successfully retrieved the witchers profile. His profile id %s and customer id %s"
+        "Successfully retrieved Test Tester's profile. Their profile id %s and customer id %s"
         % (
             response.profile.customerProfileId,
             response.profile.merchantCustomerId,
@@ -151,11 +151,11 @@ def get_customer_profile_transaction_list(profileId):
 
     if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
         return response_builder(
-            response, "Failed to retrieve the witchers transactions!!!"
+            response, "Failed to retrieve Test Tester's transactions!"
         )
 
     return response_builder(
-        response, "Rectrieved a list of the witchers transactions!!!"
+        response, "Rectrieved a list of Test Tester's transactions!"
     )
 
 
@@ -189,11 +189,11 @@ def get_customer_subscriptions():
 
     if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
         return response_builder(
-            response, "Failed to retrieve the witchers list of subscriptions!!!"
+            response, "Failed to retrieve Test Tester's list of subscriptions!"
         )
 
     return response_builder(
-        response, "Successfully retrieved the witchers list of subscriptions!!!"
+        response, "Successfully retrieved Test Tester's list of subscriptions!"
     )
 
 
@@ -212,13 +212,9 @@ def delete_customer(profileId):
     response = controller.getresponse()
 
     if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
-        return response_builder(
-            response, "Failed to kill the witcher with your wyvern trap!!!"
-        )
+        return response_builder(response, "Failed to delete Test Tester's profile!")
 
-    return response_builder(
-        response, "Successfully killed the witcher luring him into a nest of wyverns!!!"
-    )
+    return response_builder(response, "Successfully deleted Test Tester's profile!")
 
 
 def accept_host_page(profileId):
@@ -290,7 +286,7 @@ def accept_host_page(profileId):
     transaction_request = apicontractsv1.transactionRequestType()
     transaction_request.transactionType = "authCaptureTransaction"
     transaction_request.amount = Decimal(110)
-    transaction_request.order = "Witcher-Services-111"
+    transaction_request.order = "Test-Membership-111"
     transaction_request.profile = profileId
 
     payment_page_request = apicontractsv1.getHostedPaymentPageRequest()
@@ -307,7 +303,7 @@ def accept_host_page(profileId):
         return {
             "token": "",
             "response": response_builder(
-                response, "Failed to generate a pyament page to collect your gold!"
+                response, "Failed to generate a payment token!"
             ),
         }
 
@@ -315,6 +311,6 @@ def accept_host_page(profileId):
         "token": response.token,
         "response": response_builder(
             response,
-            "Successfully setup a payment page to earn your gold from the witcher!!!",
+            "Sucessfully generated a token to then receive a payment page!",
         ),
     }
