@@ -5,8 +5,9 @@
     </form>
 
     <input name="iframe_response" type="hidden" id="iframe_response" value="" />
-    <button id="iframe_followup" hx-post="/receipt" hx-include="#iframe_response" hx-target="#response_message"
-        hx-swap="outerHTML" hidden></button>
+    <button id="iframe_followup" hx-post="/receipt" hx-include="#iframe_response" hx-target="#response_message" hidden></button>
+    <button id="iframe_cancel" hx-get="/cancel" hx-target="#response_message" hidden></button>
+
 
     <!-- height="850px" width="100%" -->
     <iframe id="add_payment" class="embed-responsive-item" name="add_payment" width="100%" height="850px"></iframe>
@@ -16,12 +17,11 @@
         window.CommunicationHandler = {};
         CommunicationHandler.onReceiveCommunication = function (args) {
             var params = parseQueryString(args.qstr);
+            console.log(params)
             switch (params["action"]) {
                 case "cancel":
-                    console.log("print cancelled")
                     break;
                 case "transactResponse":
-                    var ifrm = document.getElementById("add_payment");
                     document.getElementById('iframe_response').value = params["response"]
                     document.getElementById('iframe_followup').click()
                     break;

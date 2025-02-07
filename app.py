@@ -33,7 +33,7 @@ def get_subscriptions():
     return render_template("response.html", response=subscriptions)
 
 
-@app.route("/reset", methods=["DELETE"])
+@app.route("/reset", methods=["PUT"])
 def reset_customer():
     deleted_customer = delete_customer(profile["id"])
 
@@ -60,6 +60,11 @@ def get_payment():
 def send_payment():
     response_token = accept_host_page(profile["id"])
     return render_template("embedded_payment.html", token=response_token["token"])
+
+
+@app.route("/cancel", methods=["GET"])
+def cancel():
+    return render_template("cancel.html")
 
 
 @app.route("/receipt", methods=["POST"])
