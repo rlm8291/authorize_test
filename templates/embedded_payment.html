@@ -17,9 +17,9 @@
         window.CommunicationHandler = {};
         CommunicationHandler.onReceiveCommunication = function (args) {
             var params = parseQueryString(args.qstr);
-            console.log(params)
             switch (params["action"]) {
                 case "cancel":
+                    document.getElementById('iframe_cancel').click()
                     break;
                 case "transactResponse":
                     document.getElementById('iframe_response').value = params["response"]

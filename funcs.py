@@ -42,10 +42,6 @@ def create_customer(action=""):
     controller.execute()
 
     response = controller.getresponse()
-    response_message = str(
-        "Success! Geralt of Rivias ID is: %s" % response.customerProfileId
-    )
-
     if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
         return {
             "profileId": "",
@@ -53,6 +49,10 @@ def create_customer(action=""):
                 response, "Failed to make the witchers profile!!"
             ),
         }
+
+    response_message = str(
+        "Success! Geralt of Rivias ID is: %s" % response.customerProfileId
+    )
 
     if action == "Delete":
         response_message = str(
