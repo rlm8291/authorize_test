@@ -25,7 +25,7 @@ One route has been added for testing:
     - this endpoint is expected to receive an JSON Object 
 
     ```json
-        {'firstName': '', 'lastName': '', 'iframe_url': ''}
+        { "firstName": "", "lastName": "", "iframe_url": "" }
     ```
 
 For the iframe_url it has to be the iframe_communicator HTML file hosted on the same domain as the location the embedded payment form.
