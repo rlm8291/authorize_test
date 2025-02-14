@@ -272,8 +272,6 @@ def accept_host_page(profileId, iframe_url):
     )
     iframe_communicator.settingValue = str('{"url": "%s"}' % iframe_url)
 
-    print(iframe_communicator.settingValue)
-
     settings = apicontractsv1.ArrayOfSetting()
     settings.setting.append(payment_return_options)
     settings.setting.append(payment_button_options)
