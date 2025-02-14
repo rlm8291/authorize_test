@@ -74,7 +74,8 @@ def get_payment():
 
 @app.route("/payment_page", methods=["POST"])
 def send_payment():
-    iframe_url = url_for("static", filename="communicator.html", _external=True)
+    iframe_url = url_for("static", filename="communicator.html", _external=True).replace("http", "https")
+    print(iframe_url)
     response_token = accept_host_page(profile["id"], iframe_url)
     return render_template("embedded_payment.html", token=response_token["token"])
 
@@ -126,3 +127,8 @@ def dev_token():
     response = jsonify({"token": str(payment_token)})
 
     return response
+
+
+@app.route("/test", methods=["GET"])
+def test():
+    return "{'test': 'works'}"
