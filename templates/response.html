@@ -5,5 +5,5 @@
     <h4>{{ response["message"] }} <span class="badge rounded-pill text-bg-success">{{ response["result"] }} : {{ response["code"] }}</span></h4>
   {% endif %}
   <hr>
-  <textarea class="form-control h-100" placeholder="Leave a comment here">{{ response["xml_string"] }}</textarea>
+  <textarea class="form-control h-100" placeholder="Leave a comment here" readonly>{{ response["xml_string"] }}</textarea>
 </div>

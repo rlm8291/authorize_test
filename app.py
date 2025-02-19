@@ -85,6 +85,10 @@ def delete():
     return render_template("response.html", response=deleted_customer)
 
 
+@app.route("/get_payment", methods=["GET"])
+def get_payment():
+    return render_template("payment_form.html")
+
 @app.route("/test", methods=["GET"])
 def test():
     return "{'test': 'works'}"
