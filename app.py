@@ -9,6 +9,7 @@ from funcs import (
     delete_customer,
 )
 
+
 config = dotenv_values(".env")
 profile = {"id": ""}
 app = Flask(__name__)
@@ -85,10 +86,22 @@ def delete():
     return render_template("response.html", response=deleted_customer)
 
 
-@app.route("/get_payment", methods=["GET"])
+@app.route("/get_hosted_form", methods=["GET"])
 def get_payment():
-    return render_template("payment_form.html")
+    client = {
+        "login": config["AUTHORIZE_LOGIN"],
+        "key": config["AUTHORIZE_CLIENT_KEY"]
+    }
 
-@app.route("/test", methods=["GET"])
-def test():
-    return "{'test': 'works'}"
+    return render_template("accept_ui_form.html", client=client)
+
+
+@app.route("/custom_payment", methods=["GET"])
+def custom_payment():
+    client = {
+        "login": config["AUTHORIZE_LOGIN"],
+        "key": config["AUTHORIZE_CLIENT_KEY"]
+    }
+
+    return render_template("custom_form.html", client=client)
+

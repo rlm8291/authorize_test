@@ -8,11 +8,9 @@ from authorizenet.apicontrollers import (
     getUnsettledTransactionListController,
     getTransactionListForCustomerController,
     deleteCustomerProfileController,
-    getHostedPaymentPageController,
     ARBGetSubscriptionListController,
 )
 
-from decimal import Decimal
 
 config = dotenv_values(".env")
 
@@ -215,3 +213,4 @@ def delete_customer(profileId):
         return response_builder(response, "Failed to delete Test Tester's profile!")
 
     return response_builder(response, "Successfully deleted Test Tester's profile!")
+

@@ -6,3 +6,5 @@ flask:
 	flask --app app run -- port=1313
 flask_watch:
 	flask --app app.py --debug run --port=1313
+flask_ssl:
+	flask --app app run --cert=adhoc

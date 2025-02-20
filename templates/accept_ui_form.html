@@ -6,12 +6,12 @@
     <hr>
 
     <button type="button" class="AcceptUI btn btn-success" data-billingAddressOptions='{"show":true, "required":true}'
-            data-apiLoginID="9jHzUY94N" data-clientKey="6NpwG4n6z3ut3e3bJL72P55He489X7yVa5y28TRWGY447CSzNw88E37DnP6emnVQ" data-acceptUIFormBtnTxt="Add Payment Method"
+            data-apiLoginID="{{ client['login'] }}" data-clientKey="{{ client['key'] }}" data-acceptUIFormBtnTxt="Add Payment Method"
             data-acceptUIFormHeaderTxt="Card Information" data-responseHandler="responseHandler">
         Add Payment Method
     </button>
 
-    <textarea id="payment_response" class="form-control h-100 mt-2" placeholder="Leave a comment here" readonly>Use the Hosted Payment button above to get a Opaque Payment Data object</textarea>
+    <textarea id="payment_response" class="form-control h-100 mt-2" placeholder="Leave a comment here" readonly>Use the Hosted Add Payment Method button above to get a Opaque Payment Data object</textarea>
     
     <script>
         function responseHandler(response) {
