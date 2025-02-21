@@ -1,5 +1,6 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, request
 from dotenv import dotenv_values
+from json import loads
 from funcs import (
     create_customer,
     find_customer,
@@ -7,7 +8,9 @@ from funcs import (
     get_unsettled_transaction_list,
     get_customer_profile_transaction_list,
     delete_customer,
+    create_payment_transaction
 )
+
 
 
 config = dotenv_values(".env")
@@ -91,18 +94,29 @@ def delete():
 def get_payment():
     client = {
         "login": config["AUTHORIZE_LOGIN"],
-        "key": config["AUTHORIZE_CLIENT_KEY"]
+        "key": config["AUTHORIZE_CLIENT_KEY"],
+        "text": "Use the Hosted Add Payment Method button above to get a Opaque Payment Data object"
+
     }
 
     return render_template("accept_ui_form.html", client=client)
 
 
-@app.route("/custom_payment", methods=["GET"])
-def custom_payment():
+@app.route("/custom_form", methods=["GET"])
+def custom_form():
     client = {
         "login": config["AUTHORIZE_LOGIN"],
-        "key": config["AUTHORIZE_CLIENT_KEY"]
+        "key": config["AUTHORIZE_CLIENT_KEY"],
+        "text": "Use the Add Payment Method button above to get a Opaque Payment Data object"
     }
 
     return render_template("custom_form.html", client=client)
+
+
+@app.route("/create_transaction", methods=["POST"])
+def create_transaction():
+    data = loads(request.values["opaque_data"])
+    response = create_payment_transaction(data["opaqueData"])
+
+    return render_template("response.html", response=response)
 

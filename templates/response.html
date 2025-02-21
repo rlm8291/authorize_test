@@ -1,4 +1,4 @@
-<div class="container-fluid h-100" id="response_message">
+<div id="response_message" class="container-fluid h-100">
   {% if response["result"] != "Ok" %}
     <h4>{{ response["message"] }} <span class="badge rounded-pill text-bg-danger">{{ response["result"] }} : {{ response["code"] }}</span></h4>
   {% else %}

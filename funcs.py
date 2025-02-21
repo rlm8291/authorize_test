@@ -9,6 +9,7 @@ from authorizenet.apicontrollers import (
     getTransactionListForCustomerController,
     deleteCustomerProfileController,
     ARBGetSubscriptionListController,
+    createTransactionController
 )
 
 
@@ -214,3 +215,65 @@ def delete_customer(profileId):
 
     return response_builder(response, "Successfully deleted Test Tester's profile!")
 
+
+def create_payment_transaction(data):
+    merchant_auth = apicontractsv1.merchantAuthenticationType()
+    merchant_auth.name = config["AUTHORIZE_LOGIN"]
+    merchant_auth.transactionKey = config["AUTHORIZE_KEY"]
+
+    refId = "ref {}".format(random.randint(0, 100000))    
+
+    opaqueData = apicontractsv1.opaqueDataType()
+    opaqueData.dataDescriptor = data["dataDescriptor"]
+    opaqueData.dataValue = data["dataValue"]
+
+    payment_method = apicontractsv1.paymentType()
+    payment_method.opaqueData = opaqueData
+    
+    order = apicontractsv1.orderType()
+    order.invoiceNumber = str(random.randint(0, 100000))
+    order.description = "Black Teapot"
+    
+    customer_address = apicontractsv1.customerAddressType()
+    customer_address.firstName = "Test"
+    customer_address.lastName = "Tester"
+    customer_address.address = "14 Test Street"
+    customer_address.city = "Test Springs"
+    customer_address.state = "TX"
+    customer_address.zip = "101010"
+    customer_address.country = "USA"
+    
+    customer_data = apicontractsv1.customerDataType()
+    customer_data.type = "individual"
+    customer_data.id = "99999456654"
+    customer_data.email = "test@test.com"
+    
+    duplicate_window_setting = apicontractsv1.settingType()
+    duplicate_window_setting.settingName = "duplicateWindow"
+    duplicate_window_setting.settingValue = "418"
+    settings = apicontractsv1.ArrayOfSetting()
+    settings.setting.append(duplicate_window_setting)
+
+    transaction_request = apicontractsv1.transactionRequestType()
+    transaction_request.transactionType = "authCaptureTransaction"
+    transaction_request.amount = 418.00
+    transaction_request.order = order
+    transaction_request.payment = payment_method
+    transaction_request.billTo = customer_address
+    transaction_request.customer = customer_data
+    transaction_request.transactionSettings = settings
+
+    create_transaction_request = apicontractsv1.createTransactionRequest()
+    create_transaction_request.merchantAuthentication = merchant_auth
+    create_transaction_request.refId = refId
+    create_transaction_request.transactionRequest = transaction_request
+    
+    create_transaction_controller = createTransactionController(create_transaction_request)
+    create_transaction_controller.execute()
+
+    response = create_transaction_controller.getresponse()
+
+    if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
+        return response_builder(response, "Failed to create a transaction with the opaque data!")
+
+    return response_builder(response, "Successfully created a transaction with the opaque data!")

@@ -40,11 +40,15 @@
             <button type="button" class="btn btn-success" onclick="send_payment_data()">
             Add Payment Method
         </button>
+
+            <input name="opaque_data" type="hidden" id="opaque_data" value="" />
+            <button class="btn btn-danger" id="payment" hx-post="/create_transaction" hx-include="#opaque_data"
+                hx-target="#response_message" hx-swap="outerHTML" disabled>Test Payment Transaction</button>
         </div>
     </form>
 
     <textarea id="payment_response" class="form-control h-75 mt-2" placeholder="Leave a comment here"
-        readonly>Use the Add Payment Method button above to get a Opaque Payment Data object</textarea>
+        readonly>{{ client["text"] }}</textarea>
 
     <script>
         function responseHandler(response) {
@@ -64,6 +68,9 @@
                 text_area.removeAttribute("readonly")
                 text_area.value = formatted
                 text_area.setAttribute("readonly", "")
+
+                document.getElementById("opaque_data").value = formatted
+                document.getElementById("payment").removeAttribute("disabled")
 
                 document.getElementById("first_name").value = ""
                 document.getElementById("last_name").value = ""
