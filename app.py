@@ -73,6 +73,7 @@ def reset_customer():
 
     return render_template("response.html", response=new_customer["response"])
 
+
 @app.route("/delete", methods=["DELETE"])
 def delete():
     if profile["id"] == "":
