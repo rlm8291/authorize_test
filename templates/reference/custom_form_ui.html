@@ -53,16 +53,6 @@
         }
 
         function responseHandler(response) {
-            if (response.messages.resultCode === "Error") {
-                var i = 0;
-                while (i < response.messages.message.length) {
-                    console.log(
-                        response.messages.message[i].code + ": " +
-                        response.messages.message[i].text
-                    );
-                    i = i + 1;
-                }
-            } else {
                 let formatted = JSON.stringify(response, null, 2)
 
                 text_area = document.getElementById("payment_response")
@@ -70,14 +60,15 @@
                 text_area.value = formatted
                 text_area.setAttribute("readonly", "")
 
-                document.getElementById("first_name").value = ""
-                document.getElementById("last_name").value = ""
-                document.getElementById("zip").value = ""
-                document.getElementById("card_number").value = ""
-                document.getElementById("card_code").value = ""
-                document.getElementById("exp_month").value = ""
-                document.getElementById("exp_year").value = ""
-            }
+                if(response.messages.resultCode != "Error") {
+                    document.getElementById("first_name").value = ""
+                    document.getElementById("last_name").value = ""
+                    document.getElementById("zip").value = ""
+                    document.getElementById("card_number").value = ""
+                    document.getElementById("card_code").value = ""
+                    document.getElementById("exp_month").value = ""
+                    document.getElementById("exp_year").value = ""
+                }
         }
 
         function send_payment_data() {
