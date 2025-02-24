@@ -7,9 +7,14 @@
     <button class="btn btn-primary" hx-get="/get_transactions" hx-target="#response_message">Get Transactions</button>
     <button class="btn btn-primary" hx-delete="/delete" hx-target="#response_message">Delete Customer Profile</button>
 </div>
-<h4>Accept UI Payment w/ Actions</h4>
+<h4>Accept JS w/ Actions</h4>
 <hr>
-<div class='d-grid gap-2'>
     <button class="btn btn-success" hx-get="/get_hosted_form" hx-target="#response_message">Get Payment Form</button>
     <button class="btn btn-success" hx-get="/custom_form" hx-target="#response_message">Get Custom Payment Form</button>
+</div>
+<h4>Accept JS</h4>
+<hr>
+<div class='d-grid gap-2'>
+    <button class="btn btn-danger" hx-get="/ui_form" hx-vals='{"form": "ui"}' hx-target="#response_message">Get Payment Form</button>
+    <button class="btn btn-danger" hx-get="/ui_form" hx-vals= '{"form": "custom"}' hx-target="#response_message">Get Custom Payment Form</button>
 </div>

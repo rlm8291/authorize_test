@@ -126,3 +126,20 @@ def save_payment():
 
     return render_template("response.html", response=response)
 
+
+@app.route("/ui_form", methods=["GET"])
+def ui_forms():
+    form = request.values["form"]
+    client = {
+        "login": config["AUTHORIZE_LOGIN"],
+        "key": config["AUTHORIZE_CLIENT_KEY"]
+    }
+    
+    if form == "ui":
+        client["text"] = "Use the Hosted Add Payment Method button above to get a Opaque Payment Data object"
+        return render_template("reference/accept_ui.html", client=client)
+    
+    if form == "custom":
+        client["text"] = "Use the Add Payment Method button above to get a Opaque Payment Data object"
+        return render_template("reference/custom_form_ui.html", client=client)
+    
