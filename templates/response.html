@@ -1,9 +1,15 @@
-<div id="response_message" class="container-fluid h-100">
-  {% if response["result"] != "Ok" %}
-    <h4>{{ response["message"] }} <span class="badge rounded-pill text-bg-danger">{{ response["result"] }} : {{ response["code"] }}</span></h4>
-  {% else %}
-    <h4>{{ response["message"] }} <span class="badge rounded-pill text-bg-success">{{ response["result"] }} : {{ response["code"] }}</span></h4>
+{% if response["result"] != "Ok" %}
+  <h4>{{ response["message"] }} <span class="badge rounded-pill text-bg-danger">{{ response["result"] }} : {{ response["code"] }}</span></h4>
+{% else %}
+  <h4>{{ response["message"] }} <span class="badge rounded-pill text-bg-success">{{ response["result"] }} : {{ response["code"] }}</span></h4>
+  {% if response|length > 4 %}
+    <h4>
+      <small class="text-body-secondary">
+        {% if response["payment_profiles"] %} {{ response["payment_profiles"] }} {% endif %}
+        {% if response["subscriptions"] %} {{ response["subscriptions"] }} {% endif %}
+      </small>
+    </h4>
   {% endif %}
-  <hr>
-  <textarea class="form-control h-100" placeholder="Leave a comment here" readonly>{{ response["xml_string"] }}</textarea>
-</div>
+{% endif %}
+<hr>
+<textarea class="form-control h-100" placeholder="Leave a comment here" readonly>{{ response["xml_string"] }}</textarea>

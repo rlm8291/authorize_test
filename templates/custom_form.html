@@ -38,12 +38,27 @@
 
         <div class="col-12">
             <button type="button" class="btn btn-success" onclick="send_payment_data()">
-            Add Payment Method
-        </button>
+                Add Payment Method
+            </button>
 
             <input name="opaque_data" type="hidden" id="opaque_data" value="" />
             <button class="btn btn-danger" id="payment" hx-post="/create_transaction" hx-include="#opaque_data"
-                hx-target="#response_message" hx-swap="outerHTML" disabled>Test Payment Transaction</button>
+                hx-target="#response_message" disabled>Test Payment Transaction</button>
+
+            {% if profile == "" %}
+                <span class="d-inline-block" id="disabled_tooltip" tabindex="0" data-bs-toggle="tooltip"
+                    data-bs-title="No Profile Present!">
+                    <button class="btn btn-warning" disabled data-bs-toggle="tooltip" data-bs-placement="top"
+                        data-bs-title="Tooltip on top">
+                        Add Payment Profile
+                    </button>
+                </span>
+            {% else %}
+                <button class="btn btn-warning" id="profile_button" disabled hx-put="/save_payment" hx-include="#opaque_data"
+                    hx-target="#response_message">
+                    Add Payment Profile
+                </button>
+            {% endif %}
         </div>
     </form>
 
@@ -51,6 +66,11 @@
         readonly>{{ client["text"] }}</textarea>
 
     <script>
+        if (document.getElementById("disabled_tooltip")) {
+            var button = document.getElementById("disabled_tooltip")
+            var tooltip = new bootstrap.Tooltip(button)
+        }
+
         function responseHandler(response) {
             if (response.messages.resultCode === "Error") {
                 var i = 0;
@@ -71,6 +91,10 @@
 
                 document.getElementById("opaque_data").value = formatted
                 document.getElementById("payment").removeAttribute("disabled")
+
+                if (document.getElementById("profile_button")) {
+                    document.getElementById("profile_button").removeAttribute("disabled")
+                }
 
                 document.getElementById("first_name").value = ""
                 document.getElementById("last_name").value = ""

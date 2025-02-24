@@ -8,9 +8,9 @@ from funcs import (
     get_unsettled_transaction_list,
     get_customer_profile_transaction_list,
     delete_customer,
-    create_payment_transaction
+    create_payment_transaction,
+    save_payment_profile
 )
-
 
 
 config = dotenv_values(".env")
@@ -96,10 +96,9 @@ def get_payment():
         "login": config["AUTHORIZE_LOGIN"],
         "key": config["AUTHORIZE_CLIENT_KEY"],
         "text": "Use the Hosted Add Payment Method button above to get a Opaque Payment Data object"
-
     }
 
-    return render_template("accept_ui_form.html", client=client)
+    return render_template("accept_ui_form.html", client=client, profile=profile["id"])
 
 
 @app.route("/custom_form", methods=["GET"])
@@ -110,13 +109,20 @@ def custom_form():
         "text": "Use the Add Payment Method button above to get a Opaque Payment Data object"
     }
 
-    return render_template("custom_form.html", client=client)
+    return render_template("custom_form.html", client=client, profile=profile["id"])
 
 
 @app.route("/create_transaction", methods=["POST"])
 def create_transaction():
     data = loads(request.values["opaque_data"])
     response = create_payment_transaction(data["opaqueData"])
+
+    return render_template("response.html", response=response)
+
+@app.route("/save_payment", methods=["PUT"])
+def save_payment():
+    data = loads(request.values["opaque_data"])
+    response = save_payment_profile(profile["id"], data["opaqueData"])
 
     return render_template("response.html", response=response)
 

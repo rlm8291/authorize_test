@@ -9,7 +9,8 @@ from authorizenet.apicontrollers import (
     getTransactionListForCustomerController,
     deleteCustomerProfileController,
     ARBGetSubscriptionListController,
-    createTransactionController
+    createTransactionController,
+    createCustomerPaymentProfileController
 )
 
 
@@ -67,40 +68,43 @@ def create_customer(action=""):
     }
 
 
-def find_customer(profileId):
+def find_customer(profile_id):
     merchant_auth = apicontractsv1.merchantAuthenticationType()
     merchant_auth.name = config["AUTHORIZE_LOGIN"]
     merchant_auth.transactionKey = config["AUTHORIZE_KEY"]
 
     get_customer_profile = apicontractsv1.getCustomerProfileRequest()
     get_customer_profile.merchantAuthentication = merchant_auth
-    get_customer_profile.customerProfileId = profileId
+    get_customer_profile.customerProfileId = profile_id
 
     controller = getCustomerProfileController(get_customer_profile)
     controller.execute()
 
     response = controller.getresponse()
-    message = ""
 
     if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
         message = "Failed to get Test Tester's profile!"
         return response_builder(response, message)
 
-    message += str(
+    message = str(
         "Successfully retrieved Test Tester's profile. Their profile id %s and customer id %s"
         % (
             response.profile.customerProfileId,
             response.profile.merchantCustomerId,
         )
     )
-    if hasattr(response.profile, "paymentProfiles"):
-        message += (
-            " (Payment Profiles: " + str(len(response.profile.paymentProfiles)) + ")"
-        )
-    if hasattr(response, "subscriptionIds"):
-        message += " (Subscriptions: " + str(len(response.subscriptionIds)) + ")"
 
-    return response_builder(response, message)
+    formatted_response = response_builder(response, message)
+
+    if hasattr(response.profile, "paymentProfiles"):
+        formatted_response["payment_profiles"] = (
+            "(Payment Profiles: " + str(len(response.profile.paymentProfiles)) + ")"
+        )
+
+    if hasattr(response, "subscriptionIds"):
+        formatted_response["subscriptions"] += "| (Subscriptions: " + str(len(response.subscriptionIds)) + ")"
+
+    return formatted_response
 
 
 def get_unsettled_transaction_list():
@@ -132,14 +136,14 @@ def get_unsettled_transaction_list():
     return response_builder(response, "Retrieved all unsettled payments!")
 
 
-def get_customer_profile_transaction_list(profileId):
+def get_customer_profile_transaction_list(profile_id):
     merchant_auth = apicontractsv1.merchantAuthenticationType()
     merchant_auth.name = config["AUTHORIZE_LOGIN"]
     merchant_auth.transactionKey = config["AUTHORIZE_KEY"]
 
     transaction_customer_list = apicontractsv1.getTransactionListForCustomerRequest()
     transaction_customer_list.merchantAuthentication = merchant_auth
-    transaction_customer_list.customerProfileId = profileId
+    transaction_customer_list.customerProfileId = profile_id
 
     transaction_customer_list = getTransactionListForCustomerController(
         transaction_customer_list
@@ -196,14 +200,14 @@ def get_customer_subscriptions():
     )
 
 
-def delete_customer(profileId):
+def delete_customer(profile_id):
     merchant_auth = apicontractsv1.merchantAuthenticationType()
     merchant_auth.name = config["AUTHORIZE_LOGIN"]
     merchant_auth.transactionKey = config["AUTHORIZE_KEY"]
 
     delete_customer_profile = apicontractsv1.deleteCustomerProfileRequest()
     delete_customer_profile.merchantAuthentication = merchant_auth
-    delete_customer_profile.customerProfileId = profileId
+    delete_customer_profile.customerProfileId = profile_id
 
     controller = deleteCustomerProfileController(delete_customer_profile)
     controller.execute()
@@ -223,12 +227,12 @@ def create_payment_transaction(data):
 
     refId = "ref {}".format(random.randint(0, 100000))    
 
-    opaqueData = apicontractsv1.opaqueDataType()
-    opaqueData.dataDescriptor = data["dataDescriptor"]
-    opaqueData.dataValue = data["dataValue"]
+    opaque_data = apicontractsv1.opaqueDataType()
+    opaque_data.dataDescriptor = data["dataDescriptor"]
+    opaque_data.dataValue = data["dataValue"]
 
     payment_method = apicontractsv1.paymentType()
-    payment_method.opaqueData = opaqueData
+    payment_method.opaqueData = opaque_data
     
     order = apicontractsv1.orderType()
     order.invoiceNumber = str(random.randint(0, 100000))
@@ -277,3 +281,40 @@ def create_payment_transaction(data):
         return response_builder(response, "Failed to create a transaction with the opaque data!")
 
     return response_builder(response, "Successfully created a transaction with the opaque data!")
+
+
+def save_payment_profile(profile_id, data):
+    merchant_auth = apicontractsv1.merchantAuthenticationType()
+    merchant_auth.name = config["AUTHORIZE_LOGIN"]
+    merchant_auth.transactionKey = config["AUTHORIZE_KEY"]
+
+    opaque_data = apicontractsv1.opaqueDataType()
+    opaque_data.dataDescriptor = data["dataDescriptor"]
+    opaque_data.dataValue = data["dataValue"]
+
+    payment_method = apicontractsv1.paymentType()
+    payment_method.opaqueData = opaque_data
+
+    bill_to = apicontractsv1.customerAddressType()
+    bill_to.firstName = "Test" + str(random.randint(0, 10000))
+    bill_to.lastName = "Test" + str(random.randint(0, 10000))
+
+    payment_profile = apicontractsv1.customerPaymentProfileType()
+    payment_profile.payment = payment_method
+    payment_profile.billTo = bill_to
+
+    create_payment_profile = apicontractsv1.createCustomerPaymentProfileRequest()
+    create_payment_profile.merchantAuthentication = merchant_auth
+    create_payment_profile.paymentProfile = payment_profile
+    create_payment_profile.customerProfileId = profile_id
+
+    payment_profile_controller = createCustomerPaymentProfileController(create_payment_profile)
+    payment_profile_controller.execute()
+
+    response = payment_profile_controller.getresponse()
+
+    if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
+        return response_builder(response, "Failed to save the payment profile!!!")
+    
+    return response_builder(response, "Successfully saved the payment profile!!!")
+
