@@ -1,7 +1,6 @@
-from flask import Flask, render_template, request, url_for, jsonify
-from json import loads, dumps
+from flask import Flask, render_template, request
 from dotenv import dotenv_values
-from api_funcs import create_api_customer, api_accept_host_page
+from json import loads
 from funcs import (
     create_customer,
     find_customer,
@@ -9,16 +8,22 @@ from funcs import (
     get_unsettled_transaction_list,
     get_customer_profile_transaction_list,
     delete_customer,
-    accept_host_page,
+    create_payment_transaction,
+    save_payment_profile
 )
 
+
 config = dotenv_values(".env")
-profile = {"id": "", "api_profile": "", "api_token": ""}
+profile = {"id": ""}
 app = Flask(__name__)
 
 
 @app.route("/", methods=["GET"])
 def hello_payment():
+    if profile["id"] != "":
+        customer = find_customer(profile["id"])
+        return render_template("main.html", response=customer)
+
     new_customer = create_customer()
     profile["id"] = new_customer["profileId"]
     return render_template("main.html", response=new_customer["response"])
@@ -26,6 +31,11 @@ def hello_payment():
 
 @app.route("/find", methods=["GET"])
 def search_customer():
+    if profile["id"] == "":
+        new_customer = create_customer()
+        profile["id"] = new_customer["profileId"]
+        return render_template("response.html", response=new_customer["response"])
+
     customer = find_customer(profile["id"])
     return render_template("response.html", response=customer)
 
@@ -38,6 +48,9 @@ def unsettled_transactions():
 
 @app.route("/get_transactions", methods=["GET"])
 def get_transactions():
+    if profile["id"] == "":
+        return render_template("action_required.html")
+
     customer_transactions = get_customer_profile_transaction_list(profile["id"])
     return render_template("response.html", response=customer_transactions)
 
@@ -50,6 +63,9 @@ def get_subscriptions():
 
 @app.route("/reset", methods=["PUT"])
 def reset_customer():
+    if profile["id"] == "":
+        return render_template("action_required.html")
+    
     deleted_customer = delete_customer(profile["id"])
 
     if deleted_customer["result"] != "Ok":
@@ -61,68 +77,69 @@ def reset_customer():
     return render_template("response.html", response=new_customer["response"])
 
 
-@app.route("/payment_token", methods=["POST"])
+@app.route("/delete", methods=["DELETE"])
+def delete():
+    if profile["id"] == "":
+        return render_template("action_required.html")
+    
+    deleted_customer = delete_customer(profile["id"])
+    
+    if deleted_customer["result"] == "Ok":
+        profile["id"] = ""
+
+    return render_template("response.html", response=deleted_customer)
+
+
+@app.route("/get_hosted_form", methods=["GET"])
 def get_payment():
-    iframe_url = url_for("static", filename="communicator.html", _external=True)
-    response_token = accept_host_page(profile["id"], iframe_url)
-    return render_template(
-        "response.html",
-        response=response_token["response"],
-        token=response_token["token"],
-    )
+    client = {
+        "login": config["AUTHORIZE_LOGIN"],
+        "key": config["AUTHORIZE_CLIENT_KEY"],
+        "text": "Use the Hosted Add Payment Method button above to get a Opaque Payment Data object"
+    }
+
+    return render_template("accept_ui_form.html", client=client, profile=profile["id"])
 
 
-@app.route("/payment_page", methods=["POST"])
-def send_payment():
-    iframe_url = url_for("static", filename="communicator.html", _external=True)
-    response_token = accept_host_page(profile["id"], iframe_url)
-    return render_template("embedded_payment.html", token=response_token["token"])
+@app.route("/custom_form", methods=["GET"])
+def custom_form():
+    client = {
+        "login": config["AUTHORIZE_LOGIN"],
+        "key": config["AUTHORIZE_CLIENT_KEY"],
+        "text": "Use the Add Payment Method button above to get a Opaque Payment Data object"
+    }
+
+    return render_template("custom_form.html", client=client, profile=profile["id"])
 
 
-@app.route("/cancel", methods=["GET"])
-def cancel():
-    return render_template("cancel.html")
+@app.route("/create_transaction", methods=["POST"])
+def create_transaction():
+    data = loads(request.values["opaque_data"])
+    response = create_payment_transaction(data["opaqueData"])
+
+    return render_template("response.html", response=response)
+
+@app.route("/save_payment", methods=["PUT"])
+def save_payment():
+    data = loads(request.values["opaque_data"])
+    response = save_payment_profile(profile["id"], data["opaqueData"])
+
+    return render_template("response.html", response=response)
 
 
-@app.route("/receipt", methods=["POST"])
-def send_receipt():
-    details = request.values["iframe_response"]
-    parsed = loads(details)
-    formatted = dumps(parsed, indent=2)
-
-    return render_template("receipt.html", content=formatted)
-
-
-@app.route("/get_api_customer", methods=["GET"])
-def send_api_customer():
-    if profile["api_profile"] == "":
-        return render_template("api_message.html")
-
-    customer = find_customer(profile["api_profile"])
-    return render_template("response.html", response=customer)
-
-
-@app.route("/api_payment", methods=["POST"])
-def get_api_payment():
-    if profile["api_token"] == "":
-        return render_template("api_message.html")
-
-    return render_template("embedded_payment.html", token=profile["api_token"])
-
-
-@app.route("/dev_token", methods=["POST"])
-def dev_token():
-    payload = request.get_json()
-    customer = create_api_customer(
-        payload["firstName"], payload["lastName"], payload["email"]
-    )
-
-    profile["api_profile"] = customer
-
-    iframe_url = payload["iframeUrl"]
-    payment_token = api_accept_host_page(customer, iframe_url)
-    profile["api_token"] = payment_token
-
-    response = jsonify({"token": str(payment_token)})
-
-    return response
+@app.route("/ui_form", methods=["GET"])
+def ui_forms():
+    form = request.values["form"]
+    client = {
+        "login": config["AUTHORIZE_LOGIN"],
+        "key": config["AUTHORIZE_CLIENT_KEY"]
+    }
+    
+    if form == "ui":
+        client["text"] = "Use the Hosted Add Payment Method button above to get a Opaque Payment Data object"
+        return render_template("reference/accept_ui.html", client=client)
+    
+    if form == "custom":
+        client["text"] = "Use the Add Payment Method button above to get a Opaque Payment Data object"
+        return render_template("reference/custom_form_ui.html", client=client)
+    
