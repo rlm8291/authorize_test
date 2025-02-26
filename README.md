@@ -21,6 +21,8 @@ The Makefile is provided with several commands for ease of use:
 * "flask_ssl" - run the app with an adhoc certificate for SSL
 * "flask_ssl_watch" - run the app with an adhoce certificate + watch enabled for reload on save
 
-NOTE: To utilize the custom payment form action please use one of the ssl commands. HTTPS needs to be enabled for communication for this form. Another option for HTTPS, if needed, is to use a reverse proxy service (ngrok, tunnelmole etc.).
- 
-Page is set to create a profile for interactions. Simple actions for creating a response and validating the transactions. 
+NOTE: To utilize the custom payment form action please use one of the SSL commands. HTTPS needs to be enabled for communication for this form. Another option for HTTPS, if needed, is to use a reverse proxy service (ngrok, tunnelmole etc.).
+
+Reference files presented under the "templates/reference" folder only provides code on the user interface structure. Working with both options for using a hosted pop up + custom form. 
+
+The sample application is set to create a proile for interactions with the Authorize.net API. 
