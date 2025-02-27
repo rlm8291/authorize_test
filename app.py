@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from dotenv import dotenv_values
-from json import loads
+from json import loads, dumps
 from funcs import (
     create_customer,
     find_customer,
@@ -143,3 +143,12 @@ def ui_forms():
         client["text"] = "Use the Add Payment Method button above to get a Opaque Payment Data object"
         return render_template("reference/custom_form_ui.html", client=client)
     
+
+@app.route("/profile_actions", methods=["POST"])
+def profile_actions():
+    opaque_data = request.values["opaque_data"]
+    disabled_profile = "Create a transaction!!!"
+    disabled_subscription = "Create a profile!!!"
+
+    return render_template("profile_actions.html", text=opaque_data, opaque_data=opaque_data, disabled_profile=disabled_profile, disabled_subscription=disabled_subscription)
+

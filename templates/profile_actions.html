@@ -1,0 +1,67 @@
+<div class="container-fluid h-100">
+    <div class="container-fluid h-100">
+        <h4>Profile Management - Starting w/ Opaque Data</h4>
+        <hr>
+
+        {% if opaque_data %}
+            <button class="btn btn-success" id="profile_button"
+                hx-put="/save_payment" hx-vals="{ opaque_data: {{ opaque_data }} }" hx-target="#response_message">
+                Create Transaction
+            </button>
+        {% else %}
+            <span class="d-inline-block" id="disabled_transaction" tabindex="0" data-bs-toggle="tooltip" data-bs-title="Opaque Data Was Used!">
+                <button class="btn btn-success" disabled
+                    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tooltip on top">
+                    Create Transaction
+                </button>
+            </span>
+        {% endif %}
+
+        {% if transaction %}
+            <button class="btn btn-warning" id="profile_button"
+                hx-post="/create_profile" hx-include="#transaction" hx-target="#response_message">
+                Create Profile from Transaction
+            </button>
+        {% else %}
+            <span class="d-inline-block" id="disabled_profile" tabindex="0" data-bs-toggle="tooltip" data-bs-title="{{ disabled_profile }}">
+                <button class="btn btn-warning" disabled
+                    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tooltip on top">
+                    Create Profile from Transaction
+                </button>
+            </span>
+        {% endif %}
+
+        {% if profile %}
+            <button class="btn btn-danger" id="profile_button"
+                hx-post="/create_profile" hx-include="#profile" hx-target="#response_message">
+                Create Subscription for Profile
+            </button>
+        {% else %}
+            <span class="d-inline-block" id="disabled_subscription" tabindex="0" data-bs-toggle="tooltip" data-bs-title="{{ disabled_subscription }}">
+                <button class="btn btn-danger" disabled
+                    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tooltip on top">
+                    Create Subscription for Profile
+                </button>
+            </span>
+        {% endif %}
+
+        <textarea class="form-control h-100 mt-2" readonly>{{ text }}</textarea>
+
+        <script>
+            if (document.getElementById("disabled_transaction")) {
+                var button = document.getElementById("disabled_transaction")
+                var tooltip = new bootstrap.Tooltip(button)
+            }
+
+            if (document.getElementById("disabled_profile")) {
+                var button = document.getElementById("disabled_profile")
+                var tooltip = new bootstrap.Tooltip(button)
+            }
+
+            if (document.getElementById("disabled_subscription")) {
+                var button = document.getElementById("disabled_subscription")
+                var tooltip = new bootstrap.Tooltip(button)
+            }
+        </script>
+    </div>
+</div>

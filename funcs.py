@@ -316,5 +316,5 @@ def save_payment_profile(profile_id, data):
     if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
         return response_builder(response, "Failed to save the payment profile!!!")
     
-    return response_builder(response, "Successfully saved the payment profile!!!")
+    return response_builder(response, "Successfully saved the payment profile with opaque data!!!")
 
