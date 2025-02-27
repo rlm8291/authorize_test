@@ -280,7 +280,10 @@ def create_payment_transaction(data):
     if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
         return response_builder(response, "Failed to create a transaction with the opaque data!")
 
-    return response_builder(response, "Successfully created a transaction with the opaque data!")
+    return {
+        "transaction": response.transactionResponse.transId,
+        "response": response_builder(response, "Successfully created a transaction with the opaque data!")
+    }
 
 
 def save_payment_profile(profile_id, data):

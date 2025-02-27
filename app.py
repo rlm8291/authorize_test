@@ -117,7 +117,7 @@ def create_transaction():
     data = loads(request.values["opaque_data"])
     response = create_payment_transaction(data["opaqueData"])
 
-    return render_template("response.html", response=response)
+    return render_template("response.html", response=response["response"])
 
 @app.route("/save_payment", methods=["PUT"])
 def save_payment():
@@ -151,4 +151,15 @@ def profile_actions():
     disabled_subscription = "Create a profile!!!"
 
     return render_template("profile_actions.html", text=opaque_data, opaque_data=opaque_data, disabled_profile=disabled_profile, disabled_subscription=disabled_subscription)
+
+@app.route("/create_profile_transaction", methods=["POST"])
+def create_profile_transaction():
+    data = loads(request.values["opaque_data"])
+    payment = create_payment_transaction(data["opaqueData"])
+
+    response = payment["response"]
+    transaction = payment["transaction"]
+    disabled_subscription = "Create a profile!!!"
+    
+    return render_template("profile_actions.html", text=response["xml_string"], transaction=transaction, disabled_subscription=disabled_subscription)
 

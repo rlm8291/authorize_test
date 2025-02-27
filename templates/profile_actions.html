@@ -5,7 +5,7 @@
 
         {% if opaque_data %}
             <button class="btn btn-success" id="profile_button"
-                hx-put="/save_payment" hx-vals="{ opaque_data: {{ opaque_data }} }" hx-target="#response_message">
+                hx-post="/create_profile_transaction" hx-vals='{ "opaque_data": {{ opaque_data }} }'' hx-target="#response_message">
                 Create Transaction
             </button>
         {% else %}
