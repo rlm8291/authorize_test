@@ -4,7 +4,7 @@
         <hr>
 
         {% if opaque_data %}
-            <button class="btn btn-success" id="profile_button"
+            <button class="btn btn-success"
                 hx-post="/create_profile_transaction" hx-vals='{ "opaque_data": {{ opaque_data }} }'' hx-target="#response_message">
                 Create Transaction
             </button>
@@ -18,8 +18,8 @@
         {% endif %}
 
         {% if transaction %}
-            <button class="btn btn-warning" id="profile_button"
-                hx-post="/create_profile" hx-include="#transaction" hx-target="#response_message">
+            <button class="btn btn-warning"
+                hx-post="/save_profile" hx-vals='{ "transaction_id": {{ transaction }} }' hx-target="#response_message">
                 Create Profile from Transaction
             </button>
         {% else %}
@@ -32,8 +32,8 @@
         {% endif %}
 
         {% if profile %}
-            <button class="btn btn-danger" id="profile_button"
-                hx-post="/create_profile" hx-include="#profile" hx-target="#response_message">
+            <button class="btn btn-danger"
+                hx-post="/create_profile" hx-vals='{ "profile_id": {{ profile }} }' hx-target="#response_message">
                 Create Subscription for Profile
             </button>
         {% else %}

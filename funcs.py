@@ -10,7 +10,8 @@ from authorizenet.apicontrollers import (
     deleteCustomerProfileController,
     ARBGetSubscriptionListController,
     createTransactionController,
-    createCustomerPaymentProfileController
+    createCustomerPaymentProfileController, 
+    createCustomerProfileFromTransactionController
 )
 
 
@@ -320,4 +321,31 @@ def save_payment_profile(profile_id, data):
         return response_builder(response, "Failed to save the payment profile!!!")
     
     return response_builder(response, "Successfully saved the payment profile with opaque data!!!")
+
+
+def save_customer_profile_from_transaction(transaction_id):
+    merchant_auth = apicontractsv1.merchantAuthenticationType()
+    merchant_auth.name = config["AUTHORIZE_LOGIN"]
+    merchant_auth.transactionKey = config["AUTHORIZE_KEY"]
+
+    profile = apicontractsv1.customerProfileBaseType()
+    profile.merchantCustomerId = str(random.randint(0, 10000))
+
+    create_profile_from_transaction = apicontractsv1.createCustomerProfileFromTransactionRequest()
+    create_profile_from_transaction.merchantAuthentication = merchant_auth
+    create_profile_from_transaction.transId = transaction_id
+    create_profile_from_transaction.customer = profile
+
+    profile_controller = createCustomerProfileFromTransactionController(create_profile_from_transaction)
+    profile_controller.execute()
+
+    response = profile_controller.getresponse()
+
+    if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
+        return response_builder(response, "Failed to create a customer profile from the transaction!!!")
+    
+    return {
+        "profile_id": response.customerProfileId,
+        "response": response_builder(response, "")
+    }
 

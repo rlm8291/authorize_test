@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from dotenv import dotenv_values
-from json import loads, dumps
+from json import loads
 from funcs import (
     create_customer,
     find_customer,
@@ -9,7 +9,8 @@ from funcs import (
     get_customer_profile_transaction_list,
     delete_customer,
     create_payment_transaction,
-    save_payment_profile
+    save_payment_profile,
+    save_customer_profile_from_transaction
 )
 
 
@@ -152,14 +153,33 @@ def profile_actions():
 
     return render_template("profile_actions.html", text=opaque_data, opaque_data=opaque_data, disabled_profile=disabled_profile, disabled_subscription=disabled_subscription)
 
+
 @app.route("/create_profile_transaction", methods=["POST"])
 def create_profile_transaction():
     data = loads(request.values["opaque_data"])
     payment = create_payment_transaction(data["opaqueData"])
 
     response = payment["response"]
-    transaction = payment["transaction"]
+    transaction_id = payment["transaction"]
     disabled_subscription = "Create a profile!!!"
+
+    if response["result"] != "Ok":
+        return render_template("response.html", response)
     
-    return render_template("profile_actions.html", text=response["xml_string"], transaction=transaction, disabled_subscription=disabled_subscription)
+    return render_template("profile_actions.html", text=response["xml_string"], transaction=transaction_id, disabled_subscription=disabled_subscription)
+
+
+@app.route("/save_profile", methods=["POST"])
+def save_profile():
+    transaction = request.values["transaction_id"]
+    profile = save_customer_profile_from_transaction(transaction)
+
+    response = profile["response"]
+    profile_id = profile["profile_id"]
+    disabled_profile = "Profile was created!!!"
+
+    if response["result"] != "Ok":
+        return render_template("response.html", response)
+
+    return render_template("profile_actions.html", text=response["xml_string"], profile=profile_id, disabled_profile=disabled_profile)
 
