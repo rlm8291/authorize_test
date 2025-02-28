@@ -10,7 +10,8 @@ from funcs import (
     delete_customer,
     create_payment_transaction,
     save_payment_profile,
-    save_customer_profile_from_transaction
+    save_customer_profile_from_transaction,
+    create_subscription_from_profile
 )
 
 
@@ -148,10 +149,8 @@ def ui_forms():
 @app.route("/profile_actions", methods=["POST"])
 def profile_actions():
     opaque_data = request.values["opaque_data"]
-    disabled_profile = "Create a transaction!!!"
-    disabled_subscription = "Create a profile!!!"
 
-    return render_template("profile_actions.html", text=opaque_data, opaque_data=opaque_data, disabled_profile=disabled_profile, disabled_subscription=disabled_subscription)
+    return render_template("profile_actions.html", text=opaque_data, opaque_data=opaque_data)
 
 
 @app.route("/create_profile_transaction", methods=["POST"])
@@ -161,12 +160,11 @@ def create_profile_transaction():
 
     response = payment["response"]
     transaction_id = payment["transaction"]
-    disabled_subscription = "Create a profile!!!"
 
     if response["result"] != "Ok":
         return render_template("response.html", response)
     
-    return render_template("profile_actions.html", text=response["xml_string"], transaction=transaction_id, disabled_subscription=disabled_subscription)
+    return render_template("profile_actions.html", text=response["xml_string"], transaction=transaction_id)
 
 
 @app.route("/save_profile", methods=["POST"])
@@ -176,10 +174,20 @@ def save_profile():
 
     response = profile["response"]
     profile_id = profile["profile_id"]
-    disabled_profile = "Profile was created!!!"
+    payment_profile_id = profile["payment_profile_id"]
 
     if response["result"] != "Ok":
         return render_template("response.html", response=profile["response"])
 
-    return render_template("profile_actions.html", text=response["xml_string"], profile=profile_id, disabled_profile=disabled_profile)
+    return render_template("profile_actions.html", text=response["xml_string"], profile=profile_id, payment_profile=payment_profile_id)
+
+
+@app.route("/create_subscription", methods=["POST"])
+def create_subscription():
+    profile = request.values["profile_id"]
+    payment_profile = request.values["payment_profile_id"]
+
+    response = create_subscription_from_profile(profile, payment_profile)
+
+    return render_template("response.html", response=response)
 

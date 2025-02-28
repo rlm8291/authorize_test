@@ -9,59 +9,47 @@
                 Create Transaction
             </button>
         {% else %}
-            <span class="d-inline-block" id="disabled_transaction" tabindex="0" data-bs-toggle="tooltip" data-bs-title="Opaque Data Was Used!">
-                <button class="btn btn-success" disabled
-                    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tooltip on top">
-                    Create Transaction
-                </button>
-            </span>
+            <button class="btn btn-success" disabled>
+                Create Transaction
+            </button>
         {% endif %}
 
         {% if transaction %}
-            <button class="btn btn-warning"
+            <button class="btn btn-warning" hx-indicator="#loading"
                 hx-post="/save_profile" hx-vals='{ "transaction_id": {{ transaction }} }' hx-target="#response_message">
+                <span class="spinner-border spinner-border-sm my-indicator" id="loading" role="status" aria-hidden="true"></span>
                 Create Profile from Transaction
             </button>
         {% else %}
-            <span class="d-inline-block" id="disabled_profile" tabindex="0" data-bs-toggle="tooltip" data-bs-title="{{ disabled_profile }}">
-                <button class="btn btn-warning" disabled
-                    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tooltip on top">
-                    Create Profile from Transaction
-                </button>
-            </span>
+            <button class="btn btn-warning" disabled>
+                Create Profile from Transaction
+            </button>
         {% endif %}
 
         {% if profile %}
-            <button class="btn btn-danger"
-                hx-post="/create_profile" hx-vals='{ "profile_id": {{ profile }} }' hx-target="#response_message">
-                Create Subscription for Profile
+            <button class="btn btn-danger" hx-indicator="#loading"
+                hx-post="/create_subscription" hx-vals='{ "profile_id": {{ profile }}, "payment_profile_id": {{ payment_profile }} }' hx-target="#response_message">
+                <span class="spinner-border spinner-border-sm my-indicator" id="loading" role="status" aria-hidden="true"></span>
+                Create Subscription for Profile                    
             </button>
         {% else %}
-            <span class="d-inline-block" id="disabled_subscription" tabindex="0" data-bs-toggle="tooltip" data-bs-title="{{ disabled_subscription }}">
-                <button class="btn btn-danger" disabled
-                    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tooltip on top">
-                    Create Subscription for Profile
-                </button>
-            </span>
+            <button class="btn btn-danger" disabled>
+                Create Subscription for Profile
+            </button>
         {% endif %}
 
         <textarea class="form-control h-100 mt-2" readonly>{{ text }}</textarea>
-
-        <script>
-            if (document.getElementById("disabled_transaction")) {
-                var button = document.getElementById("disabled_transaction")
-                var tooltip = new bootstrap.Tooltip(button)
-            }
-
-            if (document.getElementById("disabled_profile")) {
-                var button = document.getElementById("disabled_profile")
-                var tooltip = new bootstrap.Tooltip(button)
-            }
-
-            if (document.getElementById("disabled_subscription")) {
-                var button = document.getElementById("disabled_subscription")
-                var tooltip = new bootstrap.Tooltip(button)
-            }
-        </script>
     </div>
+
+    <style>
+        .my-indicator{
+            display: none;
+        }
+        .htmx-request .my-indicator{
+            display: inline-block;
+        }
+        .htmx-request.my-indicator{
+            display: inline-block;
+        }
+    </style>
 </div>
