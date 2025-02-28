@@ -13,6 +13,12 @@
         </button>
 
         <input name="opaque_data" type="hidden" id="opaque_data" value="" />
+
+        <button class="btn btn-info" id="profile_actions" disabled
+            hx-post="/profile_actions" hx-include="#opaque_data" hx-target="#response_message">
+            Test Profile Actions
+        </button>
+
         <button class="btn btn-danger" id="payment" disabled
             hx-post="/create_transaction" hx-include="#opaque_data" hx-target="#response_message">
             Test Payment Transaction
@@ -32,8 +38,7 @@
             </button>
         {% endif %}
 
-        <textarea id="payment_response" class="form-control h-100 mt-2" placeholder="Leave a comment here"
-            readonly>{{ client["text"] }}</textarea>
+        <textarea id="payment_response" class="form-control h-100 mt-2" readonly>{{ client["text"] }}</textarea>
 
         <script>
             if (document.getElementById("disabled_tooltip")) {
@@ -50,9 +55,10 @@
                 }
 
                 update_text(formatted)
-                    
+                
                 document.getElementById("opaque_data").value = formatted
                 document.getElementById("payment").removeAttribute("disabled")
+                document.getElementById("profile_actions").removeAttribute("disabled")
                     
                 if (document.getElementById("profile_button")) {
                     document.getElementById("profile_button").removeAttribute("disabled")

@@ -1,7 +1,8 @@
-import random
+import random, time
 from lxml import etree as et
 from dotenv import dotenv_values
 from authorizenet import apicontractsv1
+from datetime import datetime
 from authorizenet.apicontrollers import (
     createCustomerProfileController,
     getCustomerProfileController,
@@ -10,7 +11,9 @@ from authorizenet.apicontrollers import (
     deleteCustomerProfileController,
     ARBGetSubscriptionListController,
     createTransactionController,
-    createCustomerPaymentProfileController
+    createCustomerPaymentProfileController, 
+    createCustomerProfileFromTransactionController, 
+    ARBCreateSubscriptionController
 )
 
 
@@ -236,11 +239,11 @@ def create_payment_transaction(data):
     
     order = apicontractsv1.orderType()
     order.invoiceNumber = str(random.randint(0, 100000))
-    order.description = "Black Teapot"
+    order.description = "Black Teapot #" + str(random.randint(0, 100000))
     
     customer_address = apicontractsv1.customerAddressType()
-    customer_address.firstName = "Test"
-    customer_address.lastName = "Tester"
+    customer_address.firstName = "Test" + str(random.randint(0, 100000))
+    customer_address.lastName = "Tester" +  str(random.randint(0, 100000))
     customer_address.address = "14 Test Street"
     customer_address.city = "Test Springs"
     customer_address.state = "TX"
@@ -278,9 +281,15 @@ def create_payment_transaction(data):
     response = create_transaction_controller.getresponse()
 
     if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
-        return response_builder(response, "Failed to create a transaction with the opaque data!")
+        return {
+            "transaction": "",
+            "response": response_builder(response, "Failed to create a transaction with the opaque data!")
+        }
 
-    return response_builder(response, "Successfully created a transaction with the opaque data!")
+    return {
+        "transaction": response.transactionResponse.transId,
+        "response": response_builder(response, "Successfully created a transaction with the opaque data!")
+    }
 
 
 def save_payment_profile(profile_id, data):
@@ -316,5 +325,79 @@ def save_payment_profile(profile_id, data):
     if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
         return response_builder(response, "Failed to save the payment profile!!!")
     
-    return response_builder(response, "Successfully saved the payment profile!!!")
+    return response_builder(response, "Successfully saved the payment profile with opaque data!!!")
+
+
+def save_customer_profile_from_transaction(transaction_id):
+    merchant_auth = apicontractsv1.merchantAuthenticationType()
+    merchant_auth.name = config["AUTHORIZE_LOGIN"]
+    merchant_auth.transactionKey = config["AUTHORIZE_KEY"]
+
+    profile = apicontractsv1.customerProfileBaseType()
+    profile.description = "Test" + str(random.randint(0, 100000))
+
+    create_profile_from_transaction = apicontractsv1.createCustomerProfileFromTransactionRequest()
+    create_profile_from_transaction.merchantAuthentication = merchant_auth
+    create_profile_from_transaction.transId = transaction_id
+    create_profile_from_transaction.customer = profile
+
+    profile_controller = createCustomerProfileFromTransactionController(create_profile_from_transaction)
+    profile_controller.execute()
+
+    response = profile_controller.getresponse()
+
+    time.sleep(3)
+
+    if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
+        return {
+            "profile_id": "",
+            "payment_profile_id": "",
+            "response": response_builder(response, "Failed to create a customer profile from the transaction!!!")
+        }
+    
+    return {
+        "profile_id": response.customerProfileId,
+        "payment_profile_id": response.customerPaymentProfileIdList.numericString,
+        "response": response_builder(response, "")
+    }
+
+def create_subscription_from_profile(profileId, paymentProfileId):
+    merchant_auth = apicontractsv1.merchantAuthenticationType()
+    merchant_auth.name = config["AUTHORIZE_LOGIN"]
+    merchant_auth.transactionKey = config["AUTHORIZE_KEY"]
+
+    time.sleep(3)
+
+    payment_schedule = apicontractsv1.paymentScheduleType()
+    payment_schedule.interval = apicontractsv1.paymentScheduleTypeInterval() 
+    payment_schedule.interval.length = 30
+    payment_schedule.interval.unit = apicontractsv1.ARBSubscriptionUnitEnum.days
+    payment_schedule.startDate = datetime(2025, 12, 30)
+    payment_schedule.totalOccurrences = 12
+    payment_schedule.trialOccurrences = 0
+
+    profile = apicontractsv1.customerProfileIdType()
+    profile.customerProfileId = profileId
+    profile.customerPaymentProfileId = paymentProfileId
+
+    subscription = apicontractsv1.ARBSubscriptionType()
+    subscription.name = "Sample Subscription"
+    subscription.paymentSchedule = payment_schedule
+    subscription.amount = 12.23
+    subscription.trialAmount = 0.00
+    subscription.profile = profile
+
+    subscription_request = apicontractsv1.ARBCreateSubscriptionRequest()
+    subscription_request.merchantAuthentication = merchant_auth
+    subscription_request.subscription = subscription
+
+    subscription_controller = ARBCreateSubscriptionController(subscription_request)
+    subscription_controller.execute()
+
+    response = subscription_controller.getresponse()
+
+    if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
+        return response_builder(response, "Failed to create a subscription from the profile")
+
+    return response_builder(response, "Created a subscription from the profile!!!")
 

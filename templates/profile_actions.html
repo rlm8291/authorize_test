@@ -1,0 +1,55 @@
+<div class="container-fluid h-100">
+    <div class="container-fluid h-100">
+        <h4>Profile Management - Starting w/ Opaque Data</h4>
+        <hr>
+
+        {% if opaque_data %}
+            <button class="btn btn-success"
+                hx-post="/create_profile_transaction" hx-vals='{ "opaque_data": {{ opaque_data }} }'' hx-target="#response_message">
+                Create Transaction
+            </button>
+        {% else %}
+            <button class="btn btn-success" disabled>
+                Create Transaction
+            </button>
+        {% endif %}
+
+        {% if transaction %}
+            <button class="btn btn-warning" hx-indicator="#loading"
+                hx-post="/save_profile" hx-vals='{ "transaction_id": {{ transaction }} }' hx-target="#response_message">
+                <span class="spinner-border spinner-border-sm my-indicator" id="loading" role="status" aria-hidden="true"></span>
+                Create Profile from Transaction
+            </button>
+        {% else %}
+            <button class="btn btn-warning" disabled>
+                Create Profile from Transaction
+            </button>
+        {% endif %}
+
+        {% if profile %}
+            <button class="btn btn-danger" hx-indicator="#loading"
+                hx-post="/create_subscription" hx-vals='{ "profile_id": {{ profile }}, "payment_profile_id": {{ payment_profile }} }' hx-target="#response_message">
+                <span class="spinner-border spinner-border-sm my-indicator" id="loading" role="status" aria-hidden="true"></span>
+                Create Subscription for Profile                    
+            </button>
+        {% else %}
+            <button class="btn btn-danger" disabled>
+                Create Subscription for Profile
+            </button>
+        {% endif %}
+
+        <textarea class="form-control h-100 mt-2" readonly>{{ text }}</textarea>
+    </div>
+
+    <style>
+        .my-indicator{
+            display: none;
+        }
+        .htmx-request .my-indicator{
+            display: inline-block;
+        }
+        .htmx-request.my-indicator{
+            display: inline-block;
+        }
+    </style>
+</div>

@@ -9,7 +9,9 @@ from funcs import (
     get_customer_profile_transaction_list,
     delete_customer,
     create_payment_transaction,
-    save_payment_profile
+    save_payment_profile,
+    save_customer_profile_from_transaction,
+    create_subscription_from_profile
 )
 
 
@@ -117,7 +119,7 @@ def create_transaction():
     data = loads(request.values["opaque_data"])
     response = create_payment_transaction(data["opaqueData"])
 
-    return render_template("response.html", response=response)
+    return render_template("response.html", response=response["response"])
 
 @app.route("/save_payment", methods=["PUT"])
 def save_payment():
@@ -143,3 +145,49 @@ def ui_forms():
         client["text"] = "Use the Add Payment Method button above to get a Opaque Payment Data object"
         return render_template("reference/custom_form_ui.html", client=client)
     
+
+@app.route("/profile_actions", methods=["POST"])
+def profile_actions():
+    opaque_data = request.values["opaque_data"]
+
+    return render_template("profile_actions.html", text=opaque_data, opaque_data=opaque_data)
+
+
+@app.route("/create_profile_transaction", methods=["POST"])
+def create_profile_transaction():
+    data = loads(request.values["opaque_data"])
+    payment = create_payment_transaction(data["opaqueData"])
+
+    response = payment["response"]
+    transaction_id = payment["transaction"]
+
+    if response["result"] != "Ok":
+        return render_template("response.html", response)
+    
+    return render_template("profile_actions.html", text=response["xml_string"], transaction=transaction_id)
+
+
+@app.route("/save_profile", methods=["POST"])
+def save_profile():
+    transaction = request.values["transaction_id"]
+    profile = save_customer_profile_from_transaction(transaction)
+
+    response = profile["response"]
+    profile_id = profile["profile_id"]
+    payment_profile_id = profile["payment_profile_id"]
+
+    if response["result"] != "Ok":
+        return render_template("response.html", response=profile["response"])
+
+    return render_template("profile_actions.html", text=response["xml_string"], profile=profile_id, payment_profile=payment_profile_id)
+
+
+@app.route("/create_subscription", methods=["POST"])
+def create_subscription():
+    profile = request.values["profile_id"]
+    payment_profile = request.values["payment_profile_id"]
+
+    response = create_subscription_from_profile(profile, payment_profile)
+
+    return render_template("response.html", response=response)
+
