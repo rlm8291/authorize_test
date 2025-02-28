@@ -179,7 +179,7 @@ def save_profile():
     disabled_profile = "Profile was created!!!"
 
     if response["result"] != "Ok":
-        return render_template("response.html", response)
+        return render_template("response.html", response=profile["response"])
 
     return render_template("profile_actions.html", text=response["xml_string"], profile=profile_id, disabled_profile=disabled_profile)
 

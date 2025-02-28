@@ -329,7 +329,7 @@ def save_customer_profile_from_transaction(transaction_id):
     merchant_auth.transactionKey = config["AUTHORIZE_KEY"]
 
     profile = apicontractsv1.customerProfileBaseType()
-    profile.merchantCustomerId = str(random.randint(0, 10000))
+    profile.merchantCustomerId = str(random.randint(0, 100000))
 
     create_profile_from_transaction = apicontractsv1.createCustomerProfileFromTransactionRequest()
     create_profile_from_transaction.merchantAuthentication = merchant_auth
@@ -342,7 +342,10 @@ def save_customer_profile_from_transaction(transaction_id):
     response = profile_controller.getresponse()
 
     if response.messages.resultCode != apicontractsv1.messageTypeEnum.Ok:
-        return response_builder(response, "Failed to create a customer profile from the transaction!!!")
+        return {
+            "profile_id": "",
+            "response": response_builder(response, "Failed to create a customer profile from the transaction!!!")
+        }
     
     return {
         "profile_id": response.customerProfileId,
